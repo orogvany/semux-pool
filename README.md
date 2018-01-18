@@ -8,9 +8,11 @@ Note:  There is no guarantees implied with this software.  It is purely use at y
 # Getting started
 
 Download the source code and compile it with maven (mvn clean install).
-Note: You will also need to download the semux-java-client https://github.com/orogvany/semux-java-client
+Note: You will also need to download/build the semux-java-client https://github.com/orogvany/semux-java-client
 
 Enable the REST API for your semux client, and note the user/pass/port
+
+*** Before running, please make sure your delegate account does not contain non-pool funds!  You should make sure to protect yourself against bugs.  Nothing in this code even calls unlock/vote functionality, so locked funds should be safe, but best bet is to move them off ***
 
 Update the semuxpool.properties file with your delegateAddress, poolProfitsAddress, apiHost, apiUser, apiPass, and set debugMode to 'true'
 debug mode allows you to run without actually making payments while you configure and sanity check.
