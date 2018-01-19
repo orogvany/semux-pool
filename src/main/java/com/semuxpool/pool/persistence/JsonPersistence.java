@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +31,7 @@ public class JsonPersistence implements Persistence
         {
             return null;
         }
-        String fileName = PAYOUT_DIRECTORY + "/" + "Payout-" + System.currentTimeMillis() + "-" + payout.getStartBlock() + "-" + payout.getEndBlock() + ".json";
+        String fileName = PAYOUT_DIRECTORY + File.separator + "Payout-" + System.currentTimeMillis() + "-" + payout.getStartBlock() + "-" + payout.getEndBlock() + ".json";
         //persist the block
         try
         {
