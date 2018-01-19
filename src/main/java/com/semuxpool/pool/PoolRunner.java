@@ -51,6 +51,8 @@ public class PoolRunner
         long blockReward = 1 * Constants.SEM;
         long fee = 50_000_000l;
 
+        long startBlock = Long.valueOf(properties.getProperty("startProcessingAtBlock"));
+
         try
         {
             TransactionLimits transactionLimits = client.getTransactionLimits("TRANSFER");

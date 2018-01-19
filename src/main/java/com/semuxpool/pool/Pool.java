@@ -40,8 +40,9 @@ public class Pool implements Runnable
     private long fee;
     private PoolPayer payer;
     private String payoutAddress;
+    private Long startBlock;
 
-    public Pool(SemuxClient client, Persistence persistence, Set<String> delegates, int payOutNBlocks, BlockResultFactory blockResultFactory, long fee, PoolPayer payer, String payoutAddress)
+    public Pool(SemuxClient client, Persistence persistence, Set<String> delegates, int payOutNBlocks, BlockResultFactory blockResultFactory, long fee, PoolPayer payer, String payoutAddress, Long startBlock)
     {
         this.client = client;
         this.persistence = persistence;
@@ -51,6 +52,7 @@ public class Pool implements Runnable
         this.fee = fee;
         this.payer = payer;
         this.payoutAddress = payoutAddress;
+        this.startBlock = startBlock;
     }
 
     @Override
@@ -184,6 +186,11 @@ public class Pool implements Runnable
             }
             //create the PayoutFactory
             payoutFactory = new PayoutFactory(delegateNameMap, payoutAddress, fee);
+
+            if(startBlock > poolState.getCurrentBlock())
+            {
+                poolState.setCurrentBlock(startBlock);
+            }
         }
         catch (IOException e)
         {
