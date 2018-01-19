@@ -1,6 +1,7 @@
 package com.semuxpool.pool.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.semuxpool.pool.api.Payout;
 import com.semuxpool.pool.state.PoolState;
 import org.slf4j.Logger;
@@ -21,6 +22,11 @@ public class JsonPersistence implements Persistence
     private static final Logger logger = LoggerFactory.getLogger(JsonPersistence.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final String PAYOUT_DIRECTORY = "payouts";
+
+    public JsonPersistence()
+    {
+        MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+    }
 
     public String persistPayout(Payout payout)
     {
