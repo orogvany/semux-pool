@@ -13,7 +13,7 @@ public interface Persistence
 {
     String persistPayout(Payout payout);
 
-    PoolState loadPoolState() throws IOException, SemuxException;
+    PoolState loadPoolState() throws IOException;
 
     void update(Payout payout);
 }

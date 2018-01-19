@@ -72,7 +72,7 @@ public class PoolRunner
         //payer
         PoolPayer payer = new PoolPayer(client, delegates, delegates.iterator().next(), persistence, fee, minPayout, note);
 
-        Pool pool = new Pool(client, persistence, delegates, payoutEveryBlock, blockResultFactory, fee, payer, poolProfitsAddress);
+        Pool pool = new Pool(client, persistence, delegates, payoutEveryBlock, blockResultFactory, fee, payer, poolProfitsAddress, startBlock);
         pool.run();
     }
 }

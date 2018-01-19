@@ -29,18 +29,19 @@ public class Pool implements Runnable
 {
     private static final Logger logger = LoggerFactory.getLogger(Pool.class);
     public static final int LOGGING_INTERVAL = 30000;
-    private SemuxClient client;
-    private Persistence persistence;
+    private final SemuxClient client;
+    private final Persistence persistence;
+    private final Set<String> delegates;
+    private final StatusLogger statusLogger = new StatusLogger();
+    private final int payOutNBlocks;
+    private final BlockResultFactory blockResultFactory;
+    private final long fee;
+    private final PoolPayer payer;
+    private final String payoutAddress;
+    private final Long startBlock;
+
     private PoolState poolState;
-    private Set<String> delegates;
-    private StatusLogger statusLogger = new StatusLogger();
     private PayoutFactory payoutFactory;
-    private int payOutNBlocks;
-    private BlockResultFactory blockResultFactory;
-    private long fee;
-    private PoolPayer payer;
-    private String payoutAddress;
-    private Long startBlock;
 
     public Pool(SemuxClient client, Persistence persistence, Set<String> delegates, int payOutNBlocks, BlockResultFactory blockResultFactory, long fee, PoolPayer payer, String payoutAddress, Long startBlock)
     {
@@ -65,6 +66,7 @@ public class Pool implements Runnable
         List<BlockResult> blockResults = new ArrayList<>();
         //once we're up to a block we
         boolean isSynced = false;
+        //noinspection InfiniteLoopStatement
         while (true)
         {
             if (System.currentTimeMillis() > (lastLog + LOGGING_INTERVAL))
@@ -132,6 +134,7 @@ public class Pool implements Runnable
             }
             catch (InterruptedException e)
             {
+                //ignore
             }
         }
     }

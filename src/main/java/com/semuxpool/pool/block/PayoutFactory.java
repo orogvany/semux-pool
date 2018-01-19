@@ -15,8 +15,8 @@ public class PayoutFactory
 {
     private Map<String, String> delegateNameMap = new HashMap<>();
     //the address for pool profits to be paid out to.
-    private String payoutAddress;
-    private long fee;
+    private final String payoutAddress;
+    private final long fee;
 
     public PayoutFactory(Map<String, String> delegateNameMap, String payoutAddress,  long fee)
     {

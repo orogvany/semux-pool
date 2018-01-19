@@ -57,7 +57,7 @@ public class StatusLogger
      * @param value value
      * @return SEM
      */
-    public String getInSEM(Long value)
+    public static String getInSEM(Long value)
     {
         return String.format("%.8f", value / (float) Constants.SEM);
     }

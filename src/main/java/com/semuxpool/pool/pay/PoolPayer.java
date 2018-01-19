@@ -21,13 +21,13 @@ import java.util.Set;
 public class PoolPayer
 {
     private static final Logger logger = LoggerFactory.getLogger(PoolPayer.class);
-    private SemuxClient client;
-    private Set<String> delegates;
-    private String payoutAddress;
-    private Persistence persistence;
-    private long fee;
-    private long minPayout;
-    private String note;
+    private final SemuxClient client;
+    private final Set<String> delegates;
+    private final String payoutAddress;
+    private final Persistence persistence;
+    private final long fee;
+    private final long minPayout;
+    private final String note;
 
     public PoolPayer(SemuxClient client, Set<String> delegates, String payoutAddress, Persistence persistence, long fee, long minPayout, String note)
     {

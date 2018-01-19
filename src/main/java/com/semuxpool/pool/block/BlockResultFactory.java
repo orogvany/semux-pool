@@ -19,12 +19,12 @@ public class BlockResultFactory
     private static final Logger logger = LoggerFactory.getLogger(BlockResultFactory.class);
 
     //optional donation address
-    public static final String DONATION_ADDRESS = "0x5a10cd29917253f3b4a98552a5e258ceb6c0775f";
-    private SemuxClient client;
-    private float poolPayoutPercent;
-    private float donationPercent;
-    private String poolProfitsAddress;
-    private Long blockReward;
+    private static final String DONATION_ADDRESS = "0x5a10cd29917253f3b4a98552a5e258ceb6c0775f";
+    private final SemuxClient client;
+    private final float poolPayoutPercent;
+    private final float donationPercent;
+    private final String poolProfitsAddress;
+    private final Long blockReward;
 
     public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward, String poolProfitsAddress)
     {

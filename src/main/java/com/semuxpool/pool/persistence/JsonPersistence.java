@@ -1,8 +1,6 @@
 package com.semuxpool.pool.persistence;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.semuxpool.client.api.SemuxException;
-import com.semuxpool.pool.api.Payment;
 import com.semuxpool.pool.api.Payout;
 import com.semuxpool.pool.state.PoolState;
 import org.slf4j.Logger;
@@ -10,14 +8,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Persist payouts to readable json.
- * An actual datastore would be nicer longterm, but this is easy to debug.
+ * An actual datastore would be nicer long-term, but this is easy to debug.
  */
 public class JsonPersistence implements Persistence
 {
@@ -56,7 +53,7 @@ public class JsonPersistence implements Persistence
     }
 
 
-    public PoolState loadPoolState() throws IOException, SemuxException
+    public PoolState loadPoolState() throws IOException
     {
         PoolState poolState = new PoolState();
 
@@ -101,9 +98,14 @@ public class JsonPersistence implements Persistence
         File directory = new File(PAYOUT_DIRECTORY);
         if (!directory.isDirectory())
         {
-            directory.mkdir();
+            boolean success = directory.mkdir();
+            if(!success)
+            {
+                throw new IOException("Unable to create payout directory");
+            }
         }
-        List<String> payoutFileNames = new ArrayList<String>();
+        List<String> payoutFileNames = new ArrayList<>();
+        //noinspection ConstantConditions
         for (File file : directory.listFiles())
         {
             payoutFileNames.add(file.getAbsolutePath());

@@ -15,6 +15,9 @@ import java.util.Set;
 public class PoolState
 {
     private static final Logger logger = LoggerFactory.getLogger(PoolState.class);
+    private final Map<String, Long> unpaidBalances = new HashMap<>();
+    private final Map<String, Long> paidBalances = new HashMap<>();
+
     //stats
     private long totalPoolProfits = 0;
     private long totalPaidOut = 0;
@@ -24,8 +27,7 @@ public class PoolState
 
     private Set<String> delegates;
     private long currentBlock;
-    private Map<String, Long> unpaidBalances = new HashMap<>();
-    private Map<String, Long> paidBalances = new HashMap<>();
+
 
     public long getTotalPoolProfits()
     {
