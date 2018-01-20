@@ -58,7 +58,7 @@ public class BlockResultFactory
             votes.put(DONATION_ADDRESS, currentPoolVotes);
         }
 
-        //add in our payout address & donation votes
+        //add in our payout address
         if (poolPayoutPercent > 0)
         {
             Long totalVotes = getTotalVotes(votes);
