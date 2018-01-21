@@ -48,3 +48,5 @@ run ``semux-pool.sh`` (linux/OSX) or ``semux-pool.bat`` (windows) files to start
 You will see json objects created in ``./payouts``  These are logs of your pool's paid transactions.  If you are running in debug mode check that these values match what you expect.
 
 After you are satisfied, set ``debugMode`` to ``false``, delete the payouts directory and start it up.
+
+Tips: 0xbfd4052374686f1b243dad1d50aa930ecb156fe4
