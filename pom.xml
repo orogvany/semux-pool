@@ -26,6 +26,13 @@
         </license>
     </licenses>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <!-- compile -->
@@ -105,9 +112,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.semuxpool</groupId>
-            <artifactId>semux-client</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <groupId>com.github.orogvany</groupId>
+            <artifactId>semux-java-client</artifactId>
+            <version>18a49b834eaa042de7ab2dcaf2c69c72a4675393</version>
         </dependency>
 
         <!-- http client -->
