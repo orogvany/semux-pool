@@ -116,6 +116,11 @@
             <artifactId>semux-java-client</artifactId>
             <version>18a49b834eaa042de7ab2dcaf2c69c72a4675393</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.semux</groupId>-->
+            <!--<artifactId>semux</artifactId>-->
+            <!--<version>1.0.0</version>-->
+        <!--</dependency>-->
 
         <!-- http client -->
         <dependency>
@@ -147,21 +152,6 @@
         </dependency>
 
         <!-- Apache commons -->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.commons</groupId>-->
-            <!--<artifactId>commons-lang3</artifactId>-->
-            <!--<version>3.6</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.apache.commons</groupId>-->
-            <!--<artifactId>commons-collections4</artifactId>-->
-            <!--<version>4.1</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>commons-logging</groupId>-->
-            <!--<artifactId>commons-logging</artifactId>-->
-            <!--<version>1.2</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
