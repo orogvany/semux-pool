@@ -148,9 +148,6 @@ public class PoolState
 
         //now unpaid balances include everything still owed.
         blocksForged += payouts.getBlocksForged().size();
-
-        //temp logging
-        new StatusLogger().logState(this);
     }
 
     /**

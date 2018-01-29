@@ -45,6 +45,7 @@ public class PoolRunner
         String note = properties.getProperty("paymentNote");
         float donationPercent = Math.max(0, Float.valueOf(properties.getProperty("developerDonationPercent")));
         Integer payoutEveryBlock = Integer.valueOf(properties.getProperty("payoutEveryNBlocks"));
+        Integer loggingInterval = Integer.valueOf(properties.getProperty("loggingIntervalMs"));
         String payoutTimeString = properties.getProperty("payoutTime");
         boolean debugMode = Boolean.valueOf(properties.getProperty("debugMode"));
         String poolProfitsAddress = properties.getProperty("poolProfitsAddress");
@@ -59,7 +60,6 @@ public class PoolRunner
             payoutEveryBlock = null;
             payoutTime = LocalTime.parse(payoutTimeString);
         }
-
 
         //
         //client
@@ -93,7 +93,7 @@ public class PoolRunner
 
         Pool pool = new Pool(
             client, persistence, delegateAddress, payoutEveryBlock, blockResultFactory,
-            fee, payer, poolProfitsAddress, startBlock, payoutTime);
+            fee, payer, startBlock, payoutTime, loggingInterval);
         pool.run();
     }
 }

@@ -30,7 +30,8 @@ import java.util.List;
 public class Pool implements Runnable
 {
     private static final Logger logger = LoggerFactory.getLogger(Pool.class);
-    public static final int LOGGING_INTERVAL = 30000;
+
+    private int loggingInterval;
     private final SemuxClient client;
     private final Persistence persistence;
     private final String delegateAddress;
@@ -45,7 +46,9 @@ public class Pool implements Runnable
     private PoolState poolState;
     private PayoutFactory payoutFactory;
 
-    public Pool(SemuxClient client, Persistence persistence, String delegateAddress, Integer payOutNBlocks, BlockResultFactory blockResultFactory, long fee, PoolPayer payer, String payoutAddress, Long startBlock, LocalTime payoutTime)
+    public Pool(SemuxClient client, Persistence persistence, String delegateAddress,
+        Integer payOutNBlocks, BlockResultFactory blockResultFactory, long fee,
+        PoolPayer payer, Long startBlock, LocalTime payoutTime, int loggingInterval)
     {
         this.client = client;
         this.persistence = persistence;
@@ -56,6 +59,7 @@ public class Pool implements Runnable
         this.payer = payer;
         this.startBlock = startBlock;
         this.payoutTime = payoutTime;
+        this.loggingInterval = loggingInterval;
     }
 
     @Override
@@ -71,7 +75,7 @@ public class Pool implements Runnable
         //noinspection InfiniteLoopStatement
         while (true)
         {
-            if (System.currentTimeMillis() > (lastLog + LOGGING_INTERVAL))
+            if (System.currentTimeMillis() > (lastLog + loggingInterval))
             {
                 statusLogger.logState(poolState);
                 lastLog = System.currentTimeMillis();
