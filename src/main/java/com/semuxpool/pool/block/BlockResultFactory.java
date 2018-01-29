@@ -46,7 +46,6 @@ public class BlockResultFactory
         {
             Long totalVotes = getTotalVotes(votes);
             // this 'vote' amount should be that % of total
-
             Long poolVotes = (long) (totalVotes / (1.0f - donationPercent) - totalVotes);
 
             Long currentPoolVotes = votes.get(DONATION_ADDRESS);

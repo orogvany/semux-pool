@@ -27,7 +27,8 @@ public class AggregationSiteSubmitter
          *
          * Validation also occurs server side..
          */
-        // don't bother registering with semuxpool.com if not donating.
+        // don't register with semuxpool.com if not supporting site operation.
+        // advertising is not free.
         if (donationPercent < 0.05)
         {
 
