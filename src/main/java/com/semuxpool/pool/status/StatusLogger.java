@@ -31,13 +31,22 @@ public class StatusLogger
         logger.info("=====================");
         logger.info("Current unpaid balances");
         long calculatedUnpaid = 0;
+        long calculatedOverpaid = 0;
         for (Map.Entry<String, Long> unpaid : poolState.getUnpaidBalances().entrySet())
         {
-            calculatedUnpaid += unpaid.getValue();
+            if (unpaid.getValue() > 0)
+            {
+                calculatedUnpaid += unpaid.getValue();
+            }
+            else
+            {
+                calculatedOverpaid -= unpaid.getValue();
+            }
             logger.info(unpaid.getKey() + " : " + getInSEM(unpaid.getValue()));
         }
         logger.info("Pool unpaid (sanity): " + getInSEM(calculatedUnpaid));
-        logger.info("Accounted for: " + (float) calculatedUnpaid / (float) poolState.getTotalUnpaid() * 100 + "%");
+        logger.info("Pool overpaid (sanity): " + getInSEM(calculatedOverpaid));
+        logger.info("Accounted for: " + (float) (calculatedUnpaid - calculatedOverpaid) / (float) poolState.getTotalUnpaid() * 100 + "%");
         logger.info("=====================");
         logger.info("Current paid balances");
         long calculatedPaid = 0;
