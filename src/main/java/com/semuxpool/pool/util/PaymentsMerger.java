@@ -23,14 +23,14 @@ public class PaymentsMerger
         List<Payout> payouts = jsonPersistence.getAllPayouts();
         Payout merged = new Payout();
         Map<String, Payment> mergedPaid = new HashMap<>();
-        for(Payout payout : payouts)
+        for (Payout payout : payouts)
         {
             Map<String, Payment> paid = payout.getPaidPayouts();
-            for(Map.Entry<String,Payment> entry : paid.entrySet())
+            for (Map.Entry<String, Payment> entry : paid.entrySet())
             {
                 Payment mergedPayment = mergedPaid.get(entry.getKey());
                 Payment toMerge = entry.getValue();
-                if(mergedPayment == null)
+                if (mergedPayment == null)
                 {
                     mergedPayment = new Payment();
                     mergedPayment.setDate(toMerge.getDate());
@@ -38,24 +38,21 @@ public class PaymentsMerger
                     mergedPayment.setHash("MERGED:");
                     mergedPayment.setIncludesPriorOwed(toMerge.isIncludesPriorOwed());
                     mergedPayment.setTo(toMerge.getTo());
-                    mergedPaid.put(entry.getKey(),mergedPayment);
+                    mergedPaid.put(entry.getKey(), mergedPayment);
                 }
                 //update with new
-                if(mergedPayment.getAmount() > 0)
+                if (mergedPayment.getAmount() > 0)
                 {
                     //consolidate the fees, since we only accounted for 1
                     mergedPayment.setAmount(mergedPayment.getAmount() + payout.getFee());
                 }
                 mergedPayment.setAmount(mergedPayment.getAmount() + toMerge.getAmount());
 
-                mergedPayment.setHash(mergedPayment.getHash() + toMerge.getHash() +",");
+                mergedPayment.setHash(mergedPayment.getHash() + toMerge.getHash() + ",");
                 mergedPayment.setIncludesPriorOwed(mergedPayment.isIncludesPriorOwed() || toMerge.isIncludesPriorOwed());
-
             }
         }
         merged.setPaidPayouts(mergedPaid);
         jsonPersistence.persistPayout(merged);
-
-
     }
 }

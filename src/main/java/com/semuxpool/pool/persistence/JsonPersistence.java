@@ -107,7 +107,7 @@ public class JsonPersistence implements Persistence
         if (!directory.isDirectory())
         {
             boolean success = directory.mkdir();
-            if(!success)
+            if (!success)
             {
                 throw new IOException("Unable to create payout directory");
             }

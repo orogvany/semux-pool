@@ -108,7 +108,7 @@ public class PoolState
             subtotalUnpaid += payout.getValue();
         }
         logger.info("SubtotalUnpaid:" + subtotalUnpaid);
-        if(subtotalUnpaid != payouts.getTotalPayouts())
+        if (subtotalUnpaid != payouts.getTotalPayouts())
         {
             logger.error("Calculated " + subtotalUnpaid + " payout but was " + payouts.getTotalPayouts());
         }

@@ -27,7 +27,5 @@ public class BlockResultTest
         System.out.println(payouts.get("foo"));
         System.out.println(payouts.get("bar"));
         System.out.println(payouts.get("pool"));
-
-
     }
 }

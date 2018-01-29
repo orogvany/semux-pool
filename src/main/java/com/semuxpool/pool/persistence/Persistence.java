@@ -1,6 +1,5 @@
 package com.semuxpool.pool.persistence;
 
-import com.semuxpool.client.api.SemuxException;
 import com.semuxpool.pool.api.Payout;
 import com.semuxpool.pool.state.PoolState;
 

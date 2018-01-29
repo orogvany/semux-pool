@@ -19,7 +19,7 @@ public class PayoutFactory
     private final String payoutAddress;
     private final long fee;
 
-    public PayoutFactory(Map<String, String> delegateNameMap, String payoutAddress,  long fee)
+    public PayoutFactory(Map<String, String> delegateNameMap, String payoutAddress, long fee)
     {
         this.delegateNameMap = delegateNameMap;
         this.payoutAddress = payoutAddress;
@@ -36,7 +36,7 @@ public class PayoutFactory
     public synchronized Payout getPayoutForBlockResults(List<BlockResult> blocks, Long startBlockId)
     {
         Payout payout = new Payout();
-        if(blocks.isEmpty() )
+        if (blocks.isEmpty())
         {
             return null;
         }
@@ -50,7 +50,7 @@ public class PayoutFactory
 
             //add up pool fees
             Long poolProfit = blockResult.getPayouts().get(payoutAddress);
-            if(poolProfit != null)
+            if (poolProfit != null)
             {
                 totalPoolFees += poolProfit;
             }
