@@ -90,10 +90,9 @@
                             <target>
                                 <copy todir="dist">
                                     <fileset dir="${project.basedir}">
-                                        <include name="config/**" />
+                                        <include name="config/semuxpool.properties" />
                                         <include name="LICENSE*" />
                                     </fileset>
-
                                 </copy>
                                 <copy file="${project.basedir}/target/semux-pool-${project.version}-shaded.jar" tofile="dist/semux-pool.jar" />
                                 <copy file="${project.basedir}/scripts/semuxpool.sh" tofile="dist/semuxpool.sh" />
