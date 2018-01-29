@@ -12,10 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * loads configuration and starts pool
@@ -24,6 +21,8 @@ public class PoolRunner
 {
     public static void main(String[] args) throws IOException, SemuxException
     {
+        //
+        // Load properties
         Properties properties = new Properties();
         if (args.length > 0)
         {
@@ -34,12 +33,9 @@ public class PoolRunner
             properties.load(new FileInputStream(new File("./config/semuxpool.properties")));
         }
 
-        Set<String> delegates = new HashSet<>();
-
-        //will eventually support multiple pools per payer
-        String[] delegatesAr = properties.getProperty("delegateAddress").split(",");
-        Collections.addAll(delegates, delegatesAr);
-
+        //
+        // Read configuration
+        String delegateAddress = properties.getProperty("delegateAddress");
         String host = properties.getProperty("apiHost");
         String payoutsDirectory = properties.getProperty("dataDirectory");
         String user = properties.getProperty("apiUser");
@@ -50,24 +46,30 @@ public class PoolRunner
         float donationPercent = Math.max(0, Float.valueOf(properties.getProperty("developerDonationPercent")));
         Integer payoutEveryBlock = Integer.valueOf(properties.getProperty("payoutEveryNBlocks"));
         String payoutTimeString = properties.getProperty("payoutTime");
+        boolean debugMode = Boolean.valueOf(properties.getProperty("debugMode"));
+        String poolProfitsAddress = properties.getProperty("poolProfitsAddress");
+        Boolean submitToAggregationSite = Boolean.valueOf(properties.getProperty("submitToAggregationSite"));
+        long startBlock = Long.valueOf(properties.getProperty("startProcessingAtBlock"));
+        float minPayoutSem = Float.valueOf(properties.getProperty("minPayoutSem"));
+        long minPayout = (long) (minPayoutSem * Constants.SEM);
+
         LocalTime payoutTime = null;
         if (payoutTimeString != null)
         {
             payoutEveryBlock = null;
             payoutTime = LocalTime.parse(payoutTimeString);
         }
-        boolean debugMode = Boolean.valueOf(properties.getProperty("debugMode"));
-        String poolProfitsAddress = properties.getProperty("poolProfitsAddress");
 
-        int minPayoutMultiplier = Integer.valueOf(properties.getProperty("minPayoutMultiplier"));
+
+        //
         //client
         SemuxClient client = new SemuxClient(host, port, user, password);
         client.setMockPayments(debugMode);
 
-        long blockReward = 1 * Constants.SEM;
-        long fee = 50_000_000l;
-
-        long startBlock = Long.valueOf(properties.getProperty("startProcessingAtBlock"));
+        //
+        // Try to look up block reward, else use defaults
+        long blockReward = 3 * Constants.SEM;
+        long fee = 5_000_000l;
 
         try
         {
@@ -80,20 +82,17 @@ public class PoolRunner
             //old API in use, just use defaults
         }
 
-        Boolean submitToAggregationSite = Boolean.valueOf(properties.getProperty("submitToAggregationSite"));
-        float minPayoutSem = Float.valueOf(properties.getProperty("minPayoutSem"));
-
-        long minPayout = (long) (minPayoutSem * Constants.SEM);
-
+        //
         //persistence
         Persistence persistence = new JsonPersistence(payoutsDirectory);
         BlockResultFactory blockResultFactory = new BlockResultFactory(client, poolPayoutPercent, donationPercent, blockReward, poolProfitsAddress);
 
+        //
         //payer
-        PoolPayer payer = new PoolPayer(client, delegates, delegates.iterator().next(), persistence, fee, minPayout, note);
+        PoolPayer payer = new PoolPayer(client, delegateAddress, persistence, fee, minPayout, note);
 
         Pool pool = new Pool(
-            client, persistence, delegates, payoutEveryBlock, blockResultFactory,
+            client, persistence, delegateAddress, payoutEveryBlock, blockResultFactory,
             fee, payer, poolProfitsAddress, startBlock, payoutTime);
         pool.run();
     }

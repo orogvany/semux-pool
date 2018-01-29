@@ -22,10 +22,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Polls for new blocks and manages state
@@ -36,29 +33,27 @@ public class Pool implements Runnable
     public static final int LOGGING_INTERVAL = 30000;
     private final SemuxClient client;
     private final Persistence persistence;
-    private final Set<String> delegates;
+    private final String delegateAddress;
     private final StatusLogger statusLogger = new StatusLogger();
     private final Integer payOutNBlocks;
     private final BlockResultFactory blockResultFactory;
     private final long fee;
     private final PoolPayer payer;
-    private final String payoutAddress;
     private final Long startBlock;
     private final LocalTime payoutTime;
 
     private PoolState poolState;
     private PayoutFactory payoutFactory;
 
-    public Pool(SemuxClient client, Persistence persistence, Set<String> delegates, Integer payOutNBlocks, BlockResultFactory blockResultFactory, long fee, PoolPayer payer, String payoutAddress, Long startBlock, LocalTime payoutTime)
+    public Pool(SemuxClient client, Persistence persistence, String delegateAddress, Integer payOutNBlocks, BlockResultFactory blockResultFactory, long fee, PoolPayer payer, String payoutAddress, Long startBlock, LocalTime payoutTime)
     {
         this.client = client;
         this.persistence = persistence;
-        this.delegates = delegates;
+        this.delegateAddress = delegateAddress;
         this.payOutNBlocks = payOutNBlocks;
         this.blockResultFactory = blockResultFactory;
         this.fee = fee;
         this.payer = payer;
-        this.payoutAddress = payoutAddress;
         this.startBlock = startBlock;
         this.payoutTime = payoutTime;
     }
@@ -215,7 +210,7 @@ public class Pool implements Runnable
      */
     private boolean ourBlock(Block block)
     {
-        return delegates.contains(block.getCoinbase());
+        return delegateAddress.contains(block.getCoinbase());
     }
 
     private void initializePoolState()
@@ -224,14 +219,10 @@ public class Pool implements Runnable
         {
             poolState = persistence.loadPoolState();
             // also create the delegateName map
-            Map<String, String> delegateNameMap = new HashMap<>();
-            for (String delegateAddress : delegates)
-            {
-                Delegate delegate = client.getDelegate(delegateAddress);
-                delegateNameMap.put(delegateAddress, delegate.getName());
-            }
+            Delegate delegate = client.getDelegate(delegateAddress);
+            String delegateName = delegate.getName();
             //create the PayoutFactory
-            payoutFactory = new PayoutFactory(delegateNameMap, payoutAddress, fee);
+            payoutFactory = new PayoutFactory(delegateName, delegateAddress, fee);
 
             if (startBlock > poolState.getCurrentBlock())
             {

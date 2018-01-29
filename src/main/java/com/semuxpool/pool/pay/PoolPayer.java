@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Handle sending payments
@@ -22,18 +21,16 @@ public class PoolPayer
 {
     private static final Logger logger = LoggerFactory.getLogger(PoolPayer.class);
     private final SemuxClient client;
-    private final Set<String> delegates;
-    private final String payoutAddress;
+    private final String delegateAddress;
     private final Persistence persistence;
     private final long fee;
     private final long minPayout;
     private final String note;
 
-    public PoolPayer(SemuxClient client, Set<String> delegates, String payoutAddress, Persistence persistence, long fee, long minPayout, String note)
+    public PoolPayer(SemuxClient client, String delegateAddress, Persistence persistence, long fee, long minPayout, String note)
     {
         this.client = client;
-        this.delegates = delegates;
-        this.payoutAddress = payoutAddress;
+        this.delegateAddress = delegateAddress;
         this.persistence = persistence;
         this.fee = fee;
         this.minPayout = minPayout;
@@ -46,7 +43,7 @@ public class PoolPayer
         persistence.persistPayout(payout);
 
         //get the current balance
-        Account account = client.getAccount(payoutAddress);
+        Account account = client.getAccount(delegateAddress);
         Long payoutAddressBalance = account.getAvailable();
 
         for (Map.Entry<String, Long> pay : payout.getPayouts().entrySet())
@@ -88,13 +85,13 @@ public class PoolPayer
                 String confirmation;
 
                 //if we voted for our own pool, just mark it as paid
-                if (delegates.contains(pay.getKey()))
+                if (delegateAddress.contains(pay.getKey()))
                 {
                     confirmation = "SELF";
                 }
                 else
                 {
-                    confirmation = client.transfer(amountToSend, payoutAddress, pay.getKey(), fee, note.getBytes());
+                    confirmation = client.transfer(amountToSend, delegateAddress, pay.getKey(), fee, note.getBytes());
                 }
 
                 payoutAddressBalance -= (amountToSend + fee);
@@ -111,7 +108,7 @@ public class PoolPayer
             }
             catch (SemuxException e)
             {
-                logger.error("Unable to send payment to " + payoutAddress, e);
+                logger.error("Unable to send payment to " + delegateAddress, e);
             }
         }
 
