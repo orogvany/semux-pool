@@ -21,10 +21,11 @@ public class JsonPersistence implements Persistence
 {
     private static final Logger logger = LoggerFactory.getLogger(JsonPersistence.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final String PAYOUT_DIRECTORY = "payouts";
+    private static String payoutsDirectory = "payouts";
 
-    public JsonPersistence()
+    public JsonPersistence(String payoutsDirectory)
     {
+        this.payoutsDirectory = payoutsDirectory;
         MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
@@ -34,7 +35,7 @@ public class JsonPersistence implements Persistence
         {
             return null;
         }
-        String fileName = PAYOUT_DIRECTORY + File.separator + "Payout-" + System.currentTimeMillis() + "-" + payout.getStartBlock() + "-" + payout.getEndBlock() + ".json";
+        String fileName = payoutsDirectory + File.separator + "Payout-" + System.currentTimeMillis() + "-" + payout.getStartBlock() + "-" + payout.getEndBlock() + ".json";
         //persist the block
         try
         {
@@ -70,6 +71,7 @@ public class JsonPersistence implements Persistence
         {
             poolState.addPayout(payout);
             block = payout.getEndBlock();
+            poolState.setLastPayoutDate(payout.getDate());
         }
 
         //start with block after last tallied.
@@ -101,7 +103,7 @@ public class JsonPersistence implements Persistence
         //load all the payouts
         ObjectMapper mapper = new ObjectMapper();
 
-        File directory = new File(PAYOUT_DIRECTORY);
+        File directory = new File(payoutsDirectory);
         if (!directory.isDirectory())
         {
             boolean success = directory.mkdir();

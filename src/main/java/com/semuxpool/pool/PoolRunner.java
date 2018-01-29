@@ -11,6 +11,7 @@ import com.semuxpool.pool.persistence.Persistence;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Properties;
@@ -24,7 +25,14 @@ public class PoolRunner
     public static void main(String[] args) throws IOException, SemuxException
     {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(new File("./config/semuxpool.properties")));
+        if (args.length > 0)
+        {
+            properties.load(new FileInputStream(new File("./config/" + args[0])));
+        }
+        else
+        {
+            properties.load(new FileInputStream(new File("./config/semuxpool.properties")));
+        }
 
         Set<String> delegates = new HashSet<>();
 
@@ -33,13 +41,21 @@ public class PoolRunner
         Collections.addAll(delegates, delegatesAr);
 
         String host = properties.getProperty("apiHost");
+        String payoutsDirectory = properties.getProperty("dataDirectory");
         String user = properties.getProperty("apiUser");
         String password = properties.getProperty("apiPass");
         int port = Integer.valueOf(properties.getProperty("apiPort"));
         float poolPayoutPercent = Math.max(0, Float.valueOf(properties.getProperty("poolFeePercent")));
         String note = properties.getProperty("paymentNote");
         float donationPercent = Math.max(0, Float.valueOf(properties.getProperty("developerDonationPercent")));
-        int payoutEveryBlock = Integer.valueOf(properties.getProperty("payoutEveryNBlocks"));
+        Integer payoutEveryBlock = Integer.valueOf(properties.getProperty("payoutEveryNBlocks"));
+        String payoutTimeString = properties.getProperty("payoutTime");
+        LocalTime payoutTime = null;
+        if (payoutTimeString != null)
+        {
+            payoutEveryBlock = null;
+            payoutTime = LocalTime.parse(payoutTimeString);
+        }
         boolean debugMode = Boolean.valueOf(properties.getProperty("debugMode"));
         String poolProfitsAddress = properties.getProperty("poolProfitsAddress");
 
@@ -66,13 +82,15 @@ public class PoolRunner
         long minPayout = fee * minPayoutMultiplier;
 
         //persistence
-        Persistence persistence = new JsonPersistence();
+        Persistence persistence = new JsonPersistence(payoutsDirectory);
         BlockResultFactory blockResultFactory = new BlockResultFactory(client, poolPayoutPercent, donationPercent, blockReward, poolProfitsAddress);
 
         //payer
         PoolPayer payer = new PoolPayer(client, delegates, delegates.iterator().next(), persistence, fee, minPayout, note);
 
-        Pool pool = new Pool(client, persistence, delegates, payoutEveryBlock, blockResultFactory, fee, payer, poolProfitsAddress, startBlock);
+        Pool pool = new Pool(
+            client, persistence, delegates, payoutEveryBlock, blockResultFactory,
+            fee, payer, poolProfitsAddress, startBlock, payoutTime);
         pool.run();
     }
 }

@@ -6,6 +6,7 @@ import com.semuxpool.pool.status.StatusLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -27,6 +28,7 @@ public class PoolState
 
     private Set<String> delegates;
     private long currentBlock;
+    private Date lastPayoutDate;
 
 
     public long getTotalPoolProfits()
@@ -169,5 +171,15 @@ public class PoolState
             b = 0l;
         }
         return a + b;
+    }
+
+    public Date getLastPayoutDate()
+    {
+        return lastPayoutDate;
+    }
+
+    public void setLastPayoutDate(Date lastPayoutDate)
+    {
+        this.lastPayoutDate = lastPayoutDate;
     }
 }

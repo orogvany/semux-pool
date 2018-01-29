@@ -3,6 +3,7 @@ package com.semuxpool.pool.block;
 import com.semuxpool.pool.api.BlockResult;
 import com.semuxpool.pool.api.Payout;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,7 @@ public class PayoutFactory
         payout.setPayouts(getPayouts(blocks));
         payout.setPoolProfits(totalPoolFees);
         payout.setFee(fee);
+        payout.setDate(new Date());
 
         return payout;
     }

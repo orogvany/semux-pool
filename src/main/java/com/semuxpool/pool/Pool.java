@@ -16,7 +16,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,17 +38,18 @@ public class Pool implements Runnable
     private final Persistence persistence;
     private final Set<String> delegates;
     private final StatusLogger statusLogger = new StatusLogger();
-    private final int payOutNBlocks;
+    private final Integer payOutNBlocks;
     private final BlockResultFactory blockResultFactory;
     private final long fee;
     private final PoolPayer payer;
     private final String payoutAddress;
     private final Long startBlock;
+    private final LocalTime payoutTime;
 
     private PoolState poolState;
     private PayoutFactory payoutFactory;
 
-    public Pool(SemuxClient client, Persistence persistence, Set<String> delegates, int payOutNBlocks, BlockResultFactory blockResultFactory, long fee, PoolPayer payer, String payoutAddress, Long startBlock)
+    public Pool(SemuxClient client, Persistence persistence, Set<String> delegates, Integer payOutNBlocks, BlockResultFactory blockResultFactory, long fee, PoolPayer payer, String payoutAddress, Long startBlock, LocalTime payoutTime)
     {
         this.client = client;
         this.persistence = persistence;
@@ -54,6 +60,7 @@ public class Pool implements Runnable
         this.payer = payer;
         this.payoutAddress = payoutAddress;
         this.startBlock = startBlock;
+        this.payoutTime = payoutTime;
     }
 
     @Override
@@ -102,8 +109,13 @@ public class Pool implements Runnable
                             //clear existing block results so we don't pay again.
                             blockResults.clear();
                             //set the current paid up to block
-                            poolState.setCurrentBlock(currentBlock + 1);
+                            poolState.setLastPayoutDate(payout.getDate());
                         }
+                        else
+                        {
+                            poolState.setLastPayoutDate(new Date());
+                        }
+                        poolState.setCurrentBlock(currentBlock + 1);
                     }
 
                     //next loop will add new block
@@ -161,7 +173,38 @@ public class Pool implements Runnable
      */
     private boolean shouldPay(long currentBlock, boolean isSynced)
     {
-        return (currentBlock > (poolState.getCurrentBlock() + payOutNBlocks)) && isSynced;
+        if (payoutTime != null)
+        {
+            LocalDateTime currentTime = LocalDateTime.now();
+
+            Date lastPayout = poolState.getLastPayoutDate();
+            if (lastPayout != null)
+            {
+                LocalDateTime lastPaymentDate = LocalDateTime.ofInstant(lastPayout.toInstant(), ZoneId.systemDefault());
+
+                LocalDate dateOfPayment = lastPaymentDate.toLocalDate();
+                dateOfPayment = dateOfPayment.plusDays(1);
+
+                LocalDateTime targetDate = LocalDateTime.of(dateOfPayment, payoutTime);
+                if (currentTime.compareTo(targetDate) > 0)
+                {
+                    return isSynced;
+                }
+            }
+            else
+            {
+                //is it past that hour today
+                if (currentTime.toLocalTime().compareTo(payoutTime) > 0)
+                {
+                    return isSynced;
+                }
+            }
+            return false;
+        }
+        else
+        {
+            return (currentBlock > (poolState.getCurrentBlock() + payOutNBlocks)) && isSynced;
+        }
     }
 
     /**
@@ -190,7 +233,7 @@ public class Pool implements Runnable
             //create the PayoutFactory
             payoutFactory = new PayoutFactory(delegateNameMap, payoutAddress, fee);
 
-            if(startBlock > poolState.getCurrentBlock())
+            if (startBlock > poolState.getCurrentBlock())
             {
                 poolState.setCurrentBlock(startBlock);
             }
