@@ -1,5 +1,6 @@
 package com.semuxpool.pool.api;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -20,6 +21,7 @@ public class Payout
     private Long fee;
     //unique identifier for payout set
     private String id;
+    private Date date;
 
     public Map<String, Long> getPayouts()
     {
@@ -115,5 +117,15 @@ public class Payout
     public void setId(String id)
     {
         this.id = id;
+    }
+
+    public Date getDate()
+    {
+        return date;
+    }
+
+    public void setDate(Date date)
+    {
+        this.date = date;
     }
 }
