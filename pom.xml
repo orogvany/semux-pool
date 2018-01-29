@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.semuxpool</groupId>
     <artifactId>semux-pool</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Semux pool</description>
 
@@ -116,11 +116,6 @@
             <artifactId>semux-java-client</artifactId>
             <version>18a49b834eaa042de7ab2dcaf2c69c72a4675393</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>org.semux</groupId>-->
-            <!--<artifactId>semux</artifactId>-->
-            <!--<version>1.0.0</version>-->
-        <!--</dependency>-->
 
         <!-- http client -->
         <dependency>
@@ -178,7 +173,6 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 </project>
 

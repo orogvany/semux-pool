@@ -79,7 +79,11 @@ public class PoolRunner
         {
             //old API in use, just use defaults
         }
-        long minPayout = fee * minPayoutMultiplier;
+
+        Boolean submitToAggregationSite = Boolean.valueOf(properties.getProperty("submitToAggregationSite"));
+        float minPayoutSem = Float.valueOf(properties.getProperty("minPayoutSem"));
+
+        long minPayout = (long) (minPayoutSem * Constants.SEM);
 
         //persistence
         Persistence persistence = new JsonPersistence(payoutsDirectory);

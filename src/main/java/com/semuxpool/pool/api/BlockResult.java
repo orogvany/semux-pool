@@ -60,6 +60,7 @@ public class BlockResult
 
     /**
      * Calculates the amount for the block that is due given a certain amount of votes
+     *
      * @param value value
      * @return partial reward
      */

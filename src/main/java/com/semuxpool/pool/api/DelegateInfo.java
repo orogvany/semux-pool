@@ -9,7 +9,6 @@ public class DelegateInfo
     private String address;
     private Long blocksForged;
     private Float votesSem;
-    private boolean isValidator;
 
     public String getName()
     {

@@ -90,6 +90,7 @@ public class BlockResultFactory
         {
             totalPaid += payout;
         }
+
         //
         // Debug statistics
         //

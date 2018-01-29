@@ -19,6 +19,7 @@ public class Payout
     private long totalPayouts;
     private TreeMap<Long, String> blocksForged;
     private Long fee;
+
     //unique identifier for payout set
     private String id;
     private Date date;
