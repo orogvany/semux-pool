@@ -110,6 +110,7 @@
     </build>
 
     <dependencies>
+        <!-- semux API client -->
         <dependency>
             <groupId>com.github.orogvany</groupId>
             <artifactId>semux-java-client</artifactId>
