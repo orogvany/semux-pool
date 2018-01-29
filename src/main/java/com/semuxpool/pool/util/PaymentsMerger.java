@@ -19,7 +19,7 @@ public class PaymentsMerger
 {
     public static void main(String[] args) throws IOException
     {
-        JsonPersistence jsonPersistence = new JsonPersistence();
+        JsonPersistence jsonPersistence = new JsonPersistence("./fixme");
         List<Payout> payouts = jsonPersistence.getAllPayouts();
         Payout merged = new Payout();
         Map<String, Payment> mergedPaid = new HashMap<>();
