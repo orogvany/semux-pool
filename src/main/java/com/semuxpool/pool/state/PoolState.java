@@ -1,5 +1,6 @@
 package com.semuxpool.pool.state;
 
+import com.semuxpool.pool.Constants;
 import com.semuxpool.pool.api.Payment;
 import com.semuxpool.pool.api.Payout;
 import com.semuxpool.pool.status.StatusLogger;
@@ -107,7 +108,7 @@ public class PoolState
             unpaidBalances.put(payout.getKey(), amount);
             subtotalUnpaid += payout.getValue();
         }
-        logger.info("SubtotalUnpaid:" + subtotalUnpaid);
+        logger.info("SubtotalUnpaid:" + Constants.getInSEM(subtotalUnpaid));
         if (subtotalUnpaid != payouts.getTotalPayouts())
         {
             logger.error("Calculated " + subtotalUnpaid + " payout but was " + payouts.getTotalPayouts());
@@ -143,7 +144,7 @@ public class PoolState
                 unpaidBalances.remove(paid.getKey());
             }
         }
-        logger.info("SubtotalPaid:" + subtotalPaid);
+        logger.info("SubtotalPaid:" + Constants.getInSEM(subtotalPaid));
         totalUnpaid -= subtotalPaid;
 
         //now unpaid balances include everything still owed.

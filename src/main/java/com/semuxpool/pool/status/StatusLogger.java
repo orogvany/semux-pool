@@ -18,12 +18,12 @@ public class StatusLogger
     {
         logger.info("=====================");
         logger.info("Block: " + poolState.getCurrentBlock());
-        logger.info("Pool profit: " + getInSEM(poolState.getTotalPoolProfits()));
-        logger.info("Pool paid: " + getInSEM(poolState.getTotalPaidOut()));
-        logger.info("Pool unpaid: " + getInSEM(poolState.getTotalUnpaid()));
-        logger.info("Pool fees paid: " + getInSEM(poolState.getTotalFeesPaid()));
+        logger.info("Pool profit: " + Constants.getInSEM(poolState.getTotalPoolProfits()));
+        logger.info("Pool paid: " + Constants.getInSEM(poolState.getTotalPaidOut()));
+        logger.info("Pool unpaid: " + Constants.getInSEM(poolState.getTotalUnpaid()));
+        logger.info("Pool fees paid: " + Constants.getInSEM(poolState.getTotalFeesPaid()));
         long totalAllTime = poolState.getTotalPaidOut() + poolState.getTotalFeesPaid() + poolState.getTotalUnpaid();
-        logger.info("Pool forged: " + getInSEM(totalAllTime));
+        logger.info("Pool forged: " + Constants.getInSEM(totalAllTime));
         logger.info("Blocks forged: " + poolState.getBlocksForged());
         float poolFee = (float) poolState.getTotalPoolProfits() / (float) totalAllTime;
         logger.info("Effective Pool Earnings %: " + poolFee * 100.0f + "%");
@@ -42,10 +42,10 @@ public class StatusLogger
             {
                 calculatedOverpaid -= unpaid.getValue();
             }
-            logger.info(unpaid.getKey() + " : " + getInSEM(unpaid.getValue()));
+            logger.info(unpaid.getKey() + " : " + Constants.getInSEM(unpaid.getValue()));
         }
-        logger.info("Pool unpaid (sanity): " + getInSEM(calculatedUnpaid));
-        logger.info("Pool overpaid (sanity): " + getInSEM(calculatedOverpaid));
+        logger.info("Pool unpaid (sanity): " + Constants.getInSEM(calculatedUnpaid));
+        logger.info("Pool overpaid (sanity): " + Constants.getInSEM(calculatedOverpaid));
         logger.info("Accounted for: " + (float) (calculatedUnpaid - calculatedOverpaid) / (float) poolState.getTotalUnpaid() * 100 + "%");
         logger.info("=====================");
         logger.info("Current paid balances");
@@ -53,21 +53,11 @@ public class StatusLogger
         for (Map.Entry<String, Long> paid : poolState.getPaidBalances().entrySet())
         {
             calculatedPaid += paid.getValue();
-            logger.info(paid.getKey() + " : " + getInSEM(paid.getValue()));
+            logger.info(paid.getKey() + " : " + Constants.getInSEM(paid.getValue()));
         }
-        logger.info("Pool paid (sanity): " + getInSEM(calculatedPaid));
+        logger.info("Pool paid (sanity): " + Constants.getInSEM(calculatedPaid));
         logger.info("Accounted for: " + (float) calculatedPaid / (float) poolState.getTotalPaidOut() * 100 + "%");
         logger.info("=====================");
     }
 
-    /**
-     * convert long to formatted string SEM
-     *
-     * @param value value
-     * @return SEM
-     */
-    public static String getInSEM(Long value)
-    {
-        return String.format("%.8f", value / (float) Constants.SEM);
-    }
 }
