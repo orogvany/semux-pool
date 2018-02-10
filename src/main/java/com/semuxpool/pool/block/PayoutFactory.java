@@ -15,14 +15,14 @@ import java.util.TreeMap;
 public class PayoutFactory
 {
     //the address for pool profits to be paid out to.
-    private final String delegateAddress;
+    private final String profitsAddress;
     private final String delegateName;
     private final long fee;
 
-    public PayoutFactory(String delegateName, String delegateAddress, long fee)
+    public PayoutFactory(String delegateName, String profitsAddress, long fee)
     {
         this.delegateName = delegateName;
-        this.delegateAddress = delegateAddress;
+        this.profitsAddress = profitsAddress;
         this.fee = fee;
     }
 
@@ -49,7 +49,7 @@ public class PayoutFactory
             blocksForged.put(blockResult.getBlockId(), delegateName);
 
             //add up pool fees
-            Long poolProfit = blockResult.getPayouts().get(delegateAddress);
+            Long poolProfit = blockResult.getPayouts().get(profitsAddress);
             if (poolProfit != null)
             {
                 totalPoolFees += poolProfit;

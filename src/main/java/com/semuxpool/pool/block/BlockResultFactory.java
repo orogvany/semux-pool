@@ -131,4 +131,9 @@ public class BlockResultFactory
         }
         return total;
     }
+
+    public String getPoolProfitsAddress()
+    {
+        return poolProfitsAddress;
+    }
 }

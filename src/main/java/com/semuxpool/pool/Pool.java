@@ -243,7 +243,7 @@ public class Pool implements Runnable
             Delegate delegate = client.getDelegate(delegateAddress);
             String delegateName = delegate.getName();
             //create the PayoutFactory
-            payoutFactory = new PayoutFactory(delegateName, delegateAddress, fee);
+            payoutFactory = new PayoutFactory(delegateName, blockResultFactory.getPoolProfitsAddress(), fee);
 
             if (startBlock > poolState.getCurrentBlock())
             {
