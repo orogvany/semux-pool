@@ -61,6 +61,7 @@ public class PoolRunner
             payoutTime = LocalTime.parse(payoutTimeString);
         }
 
+
         //
         //client
         SemuxClient client = new SemuxClient(host, port, user, password);

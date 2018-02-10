@@ -187,15 +187,32 @@ public class Pool implements Runnable
                 LocalDateTime targetDate = LocalDateTime.of(dateOfPayment, payoutTime);
                 if (currentTime.compareTo(targetDate) > 0)
                 {
+                    if (isSynced)
+                    {
+                        logger.info("Time is pays " + payoutTime + ", time to pay!");
+                    }
                     return isSynced;
+                }
+                else if (isSynced)
+                {
+                    logger.info("Block " + currentBlock + " processed: waiting until " + payoutTime.toString() + " to pay.");
                 }
             }
             else
             {
+
                 //is it past that hour today
                 if (currentTime.toLocalTime().compareTo(payoutTime) > 0)
                 {
+                    if (isSynced)
+                    {
+                        logger.info("Time is pays " + payoutTime + ", time to pay!");
+                    }
                     return isSynced;
+                }
+                else if (isSynced)
+                {
+                    logger.info("Block " + currentBlock + " processed: No previous payment date - waiting until " + payoutTime.toString());
                 }
             }
             return false;
