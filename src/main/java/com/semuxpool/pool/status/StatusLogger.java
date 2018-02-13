@@ -42,7 +42,10 @@ public class StatusLogger
             {
                 calculatedOverpaid -= unpaid.getValue();
             }
-            logger.info(unpaid.getKey() + " : " + Constants.getInSEM(unpaid.getValue()));
+            if(unpaid.getValue() != 0)
+            {
+                logger.info(unpaid.getKey() + " : " + Constants.getInSEM(unpaid.getValue()));
+            }
         }
         logger.info("Pool unpaid (sanity): " + Constants.getInSEM(calculatedUnpaid));
         logger.info("Pool overpaid (sanity): " + Constants.getInSEM(calculatedOverpaid));
