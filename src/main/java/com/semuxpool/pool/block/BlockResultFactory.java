@@ -125,6 +125,9 @@ public class BlockResultFactory
             Long priorVotes = votesAged.get(voter);
             if (priorVotes != null)
             {
+                if(currentVotes.compareTo(priorVotes) > 0) {
+                     logger.debug("New votes for " + voter + " not yet vested");
+                }
                 merged.put(voter, Math.min(currentVotes, priorVotes));
             }
         }
