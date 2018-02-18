@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,9 +43,7 @@ public class BlockResultFactory
     public BlockResult getBlockResult(Block block) throws IOException, SemuxException
     {
         //get the current voters active at that block, either for that delegate or for all
-        Map<String, Long> votes = client.getVotesForBlock(block.getCoinbase(), block.getNumber());
-        Map<String, Long> votesAged = client.getVotesForBlock(block.getCoinbase(), Math.max(1l, block.getNumber() - minimumVoteAgeBeforeCounting));
-        votes = mergeVotes(votes, votesAged);
+        Map<String, Long> votes = getAgedVotesForBlock(block);
 
         // no donation if just single voter
         if (donationPercent > 0 && votes.size() > 1)
@@ -116,22 +116,64 @@ public class BlockResultFactory
         return result;
     }
 
-    private Map<String, Long> mergeVotes(Map<String, Long> votes, Map<String, Long> votesAged)
+    private Map<String, Long> getAgedVotesForBlock(Block block) throws IOException, SemuxException
     {
-        Map<String, Long> merged = new HashMap<>();
-        for (String voter : votes.keySet())
+        String delegate = block.getCoinbase();
+        List transactions = client.getAccountTransactions(delegate, 0, 2147483647);
+        HashMap<String, Long> votes = new HashMap<>();
+        Iterator iterator = transactions.iterator();
+        Long oldestBlockDate = client.getBlock(Math.max(1, block.getNumber() - minimumVoteAgeBeforeCounting)).getTimestamp();
+
+        while (iterator.hasNext())
         {
-            Long currentVotes = votes.get(voter);
-            Long priorVotes = votesAged.get(voter);
-            if (priorVotes != null)
+            Transaction transaction = (Transaction) iterator.next();
+            if (transaction.getTimestamp() > block.getTimestamp())
             {
-                if(currentVotes.compareTo(priorVotes) > 0) {
-                     logger.debug("New votes for " + voter + " not yet vested");
+                break;
+            }
+
+            long valueToAdd = 0L;
+            //only count votes that are older than threshold
+            // new version will have block on transaction, til then, we keep track of dates
+
+            if (transaction.getType().equals("VOTE"))
+            {
+                //votes only count when aged.
+                if (transaction.getTimestamp() <= oldestBlockDate)
+                {
+                    valueToAdd = transaction.getValue();
                 }
-                merged.put(voter, Math.min(currentVotes, priorVotes));
+                else
+                {
+                    logger.debug("Vote not yet vested");
+                }
+            }
+            else if (transaction.getType().equals("UNVOTE"))
+            {
+                //unvotes count immediately
+                valueToAdd = 0L - transaction.getValue();
+            }
+
+            if (valueToAdd != 0L)
+            {
+                Long currentVal = (Long) votes.get(transaction.getFrom());
+                if (currentVal == null)
+                {
+                    currentVal = 0L;
+                }
+
+                currentVal = currentVal + valueToAdd;
+                if (currentVal < 0L)
+                {
+                    logger.info("Negative vote amount from " + transaction.getFrom());
+                    currentVal = 0l;
+                }
+
+                votes.put(transaction.getFrom(), currentVal);
             }
         }
-        return merged;
+
+        return votes;
     }
 
     private Long getReward(Block block)
