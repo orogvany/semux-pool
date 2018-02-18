@@ -12,7 +12,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * loads configuration and starts pool
@@ -42,16 +44,27 @@ public class PoolRunner
         String password = properties.getProperty("apiPass");
         int port = Integer.valueOf(properties.getProperty("apiPort"));
         float poolPayoutPercent = Math.max(0, Float.valueOf(properties.getProperty("poolFeePercent")));
-        String note = properties.getProperty("paymentNote");
-        float donationPercent = Math.max(0, Float.valueOf(properties.getProperty("developerDonationPercent")));
-        Integer payoutEveryBlock = Integer.valueOf(properties.getProperty("payoutEveryNBlocks"));
-        Integer loggingInterval = Integer.valueOf(properties.getProperty("loggingIntervalMs"));
+        String note = properties.getProperty("paymentNote", "semuxpool.com");
+        float developerBeerFundPercent = Math.max(0, Float.valueOf(properties.getProperty("developerBeerFundPercent", "0.05")));
+        Set<String> poolAddresses = new HashSet<>();
+        poolAddresses.add(delegateAddress);
+        Integer payoutEveryBlock = Integer.valueOf(properties.getProperty("payoutEveryNBlocks", "2880"));
+        Integer loggingInterval = Integer.valueOf(properties.getProperty("loggingIntervalMs", "3600000"));
         String payoutTimeString = properties.getProperty("payoutTime");
-        boolean debugMode = Boolean.valueOf(properties.getProperty("debugMode"));
+        boolean debugMode = Boolean.valueOf(properties.getProperty("debugMode", "false"));
+        //handle pool quitters
+        boolean dontPayPoolQuitters = Boolean.valueOf(properties.getProperty("dontPayPoolQuitters", "false"));
+        String payQuitterAddress = properties.getProperty("poolQuitterAddress");
+        poolAddresses.add(payQuitterAddress);
+        Integer minimumVoteAgeBeforeCounting = Integer.valueOf(properties.getProperty("minimumVoteAgeBeforeCounting", "200"));
+
+
+
         String poolProfitsAddress = properties.getProperty("poolProfitsAddress");
-        Boolean submitToAggregationSite = Boolean.valueOf(properties.getProperty("submitToAggregationSite"));
-        long startBlock = Long.valueOf(properties.getProperty("startProcessingAtBlock"));
-        float minPayoutSem = Float.valueOf(properties.getProperty("minPayoutSem"));
+        poolAddresses.add(poolProfitsAddress);
+        boolean submitToAggregationSite = Boolean.valueOf(properties.getProperty("submitToAggregationSite", "false"));
+        long startBlock = Long.valueOf(properties.getProperty("startProcessingAtBlock", "0"));
+        float minPayoutSem = Float.valueOf(properties.getProperty("minPayoutSem", "0.05"));
         long minPayout = (long) (minPayoutSem * Constants.SEM);
 
         LocalTime payoutTime = null;
@@ -60,7 +73,6 @@ public class PoolRunner
             payoutEveryBlock = null;
             payoutTime = LocalTime.parse(payoutTimeString);
         }
-
 
         //
         //client
@@ -86,11 +98,11 @@ public class PoolRunner
         //
         //persistence
         Persistence persistence = new JsonPersistence(payoutsDirectory);
-        BlockResultFactory blockResultFactory = new BlockResultFactory(client, poolPayoutPercent, donationPercent, blockReward, poolProfitsAddress);
+        BlockResultFactory blockResultFactory = new BlockResultFactory(client, poolPayoutPercent, developerBeerFundPercent, blockReward, poolProfitsAddress, minimumVoteAgeBeforeCounting);
 
         //
         //payer
-        PoolPayer payer = new PoolPayer(client, delegateAddress, persistence, fee, minPayout, note);
+        PoolPayer payer = new PoolPayer(client, delegateAddress, persistence, fee, minPayout, note, dontPayPoolQuitters, payQuitterAddress, poolAddresses);
 
         Pool pool = new Pool(
             client, persistence, delegateAddress, payoutEveryBlock, blockResultFactory,

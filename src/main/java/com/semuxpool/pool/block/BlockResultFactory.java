@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,27 +20,30 @@ public class BlockResultFactory
     private static final Logger logger = LoggerFactory.getLogger(BlockResultFactory.class);
 
     //optional donation address
-    private static final String DONATION_ADDRESS = "0x5a10cd29917253f3b4a98552a5e258ceb6c0775f";
+    public static final String DONATION_ADDRESS = "0x5a10cd29917253f3b4a98552a5e258ceb6c0775f";
     private final SemuxClient client;
     private final float poolPayoutPercent;
     private final float donationPercent;
     private final String poolProfitsAddress;
+    private Integer minimumVoteAgeBeforeCounting;
     private final Long blockReward;
 
-    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward, String poolProfitsAddress)
+    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward, String poolProfitsAddress, Integer minimumVoteAgeBeforeCounting)
     {
         this.client = client;
         this.poolPayoutPercent = poolPayoutPercent;
         this.blockReward = blockReward;
         this.donationPercent = donationPercent;
         this.poolProfitsAddress = poolProfitsAddress;
+        this.minimumVoteAgeBeforeCounting = minimumVoteAgeBeforeCounting;
     }
 
     public BlockResult getBlockResult(Block block) throws IOException, SemuxException
     {
         //get the current voters active at that block, either for that delegate or for all
-        Map<String, Long> votes;
-        votes = client.getVotesForBlock(block.getCoinbase(), block.getNumber());
+        Map<String, Long> votes = client.getVotesForBlock(block.getCoinbase(), block.getNumber());
+        Map<String, Long> votesAged = client.getVotesForBlock(block.getCoinbase(), Math.max(1l, block.getNumber() - minimumVoteAgeBeforeCounting));
+        votes = mergeVotes(votes, votesAged);
 
         // no donation if just single voter
         if (donationPercent > 0 && votes.size() > 1)
@@ -110,6 +114,21 @@ public class BlockResultFactory
         logger.trace("total percent " + totalPercent);
         logger.trace("total votes percent " + totalVotesPercent);
         return result;
+    }
+
+    private Map<String, Long> mergeVotes(Map<String, Long> votes, Map<String, Long> votesAged)
+    {
+        Map<String, Long> merged = new HashMap<>();
+        for (String voter : votes.keySet())
+        {
+            Long currentVotes = votes.get(voter);
+            Long priorVotes = votesAged.get(voter);
+            if (priorVotes != null)
+            {
+                merged.put(voter, Math.min(currentVotes, priorVotes));
+            }
+        }
+        return merged;
     }
 
     private Long getReward(Block block)

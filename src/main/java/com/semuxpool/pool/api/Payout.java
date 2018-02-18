@@ -129,4 +129,14 @@ public class Payout
     {
         this.date = date;
     }
+
+    public int getNumForgedBlocks()
+    {
+        return blocksForged.size();
+    }
+
+    public void setNumForgedBlocks(int size)
+    {
+        //virtual - no setter.
+    }
 }
