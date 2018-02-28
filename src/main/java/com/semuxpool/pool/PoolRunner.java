@@ -5,6 +5,7 @@ import com.semuxpool.client.api.SemuxException;
 import com.semuxpool.client.api.TransactionLimits;
 import com.semuxpool.pool.block.BlockResultFactory;
 import com.semuxpool.pool.pay.PoolPayer;
+import com.semuxpool.pool.pay.PoolProfitAddresses;
 import com.semuxpool.pool.persistence.JsonPersistence;
 import com.semuxpool.pool.persistence.Persistence;
 
@@ -60,8 +61,10 @@ public class PoolRunner
 
 
 
-        String poolProfitsAddress = properties.getProperty("poolProfitsAddress");
-        poolAddresses.add(poolProfitsAddress);
+        PoolProfitAddresses poolProfitsAddress = PoolProfitAddresses.fromString(properties.getProperty("poolProfitsAddress"));
+
+
+        poolAddresses.addAll(poolProfitsAddress.getAddresses());
         boolean submitToAggregationSite = Boolean.valueOf(properties.getProperty("submitToAggregationSite", "false"));
         long startBlock = Long.valueOf(properties.getProperty("startProcessingAtBlock", "0"));
         float minPayoutSem = Float.valueOf(properties.getProperty("minPayoutSem", "0.05"));

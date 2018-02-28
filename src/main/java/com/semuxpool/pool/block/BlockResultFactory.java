@@ -5,6 +5,7 @@ import com.semuxpool.client.api.Block;
 import com.semuxpool.client.api.SemuxException;
 import com.semuxpool.client.api.Transaction;
 import com.semuxpool.pool.api.BlockResult;
+import com.semuxpool.pool.pay.PoolProfitAddresses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +27,11 @@ public class BlockResultFactory
     private final SemuxClient client;
     private final float poolPayoutPercent;
     private final float donationPercent;
-    private final String poolProfitsAddress;
+    private final PoolProfitAddresses poolProfitsAddress;
     private Integer minimumVoteAgeBeforeCounting;
     private final Long blockReward;
 
-    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward, String poolProfitsAddress, Integer minimumVoteAgeBeforeCounting)
+    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward, PoolProfitAddresses poolProfitsAddress, Integer minimumVoteAgeBeforeCounting)
     {
         this.client = client;
         this.poolPayoutPercent = poolPayoutPercent;
@@ -74,7 +75,10 @@ public class BlockResultFactory
                 currentPoolVotes = 0l;
             }
             currentPoolVotes += poolVotes;
-            votes.put(poolProfitsAddress, currentPoolVotes);
+            for (String address : poolProfitsAddress.getAddresses())
+            {
+                votes.put(address, (long) (currentPoolVotes * poolProfitsAddress.getPercent(address)));
+            }
         }
 
         //recalculate totalVotes
@@ -196,7 +200,7 @@ public class BlockResultFactory
         return total;
     }
 
-    public String getPoolProfitsAddress()
+    public PoolProfitAddresses getPoolProfitsAddress()
     {
         return poolProfitsAddress;
     }

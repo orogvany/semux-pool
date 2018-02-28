@@ -2,6 +2,7 @@ package com.semuxpool.pool.block;
 
 import com.semuxpool.pool.api.BlockResult;
 import com.semuxpool.pool.api.Payout;
+import com.semuxpool.pool.pay.PoolProfitAddresses;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -15,11 +16,11 @@ import java.util.TreeMap;
 public class PayoutFactory
 {
     //the address for pool profits to be paid out to.
-    private final String profitsAddress;
+    private final PoolProfitAddresses profitsAddress;
     private final String delegateName;
     private final long fee;
 
-    public PayoutFactory(String delegateName, String profitsAddress, long fee)
+    public PayoutFactory(String delegateName, PoolProfitAddresses profitsAddress, long fee)
     {
         this.delegateName = delegateName;
         this.profitsAddress = profitsAddress;
@@ -49,7 +50,13 @@ public class PayoutFactory
             blocksForged.put(blockResult.getBlockId(), delegateName);
 
             //add up pool fees
-            Long poolProfit = blockResult.getPayouts().get(profitsAddress);
+            Long poolProfit = 0l;
+
+            for (String address : profitsAddress.getAddresses())
+            {
+                poolProfit += blockResult.getPayouts().get(address);
+            }
+
             if (poolProfit != null)
             {
                 totalPoolFees += poolProfit;
