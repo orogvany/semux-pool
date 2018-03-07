@@ -66,6 +66,10 @@ public class BlockResult
      */
     private Long getPartialReward(Long value)
     {
+        if(totalVotes == 0)
+        {
+            return 0l;
+        }
         BigInteger results = BigInteger.valueOf(getBlockReward()).multiply(BigInteger.valueOf(value)).divide(BigInteger.valueOf(totalVotes));
         return results.longValue();
     }

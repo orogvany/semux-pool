@@ -169,7 +169,7 @@ public class BlockResultFactory
                 currentVal = currentVal + valueToAdd;
                 if (currentVal < 0L)
                 {
-                    logger.info("Negative vote amount from " + transaction.getFrom());
+                    logger.info("Negative vote amount from " + transaction.getFrom() + ", votes = " + currentVal + ". This is normal when votes not yet vested are unvoted.");
                     currentVal = 0l;
                 }
 

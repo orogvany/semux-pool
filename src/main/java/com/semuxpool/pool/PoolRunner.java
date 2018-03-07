@@ -59,10 +59,7 @@ public class PoolRunner
         poolAddresses.add(payQuitterAddress);
         Integer minimumVoteAgeBeforeCounting = Integer.valueOf(properties.getProperty("minimumVoteAgeBeforeCounting", "200"));
 
-
-
         PoolProfitAddresses poolProfitsAddress = PoolProfitAddresses.fromString(properties.getProperty("poolProfitsAddress"));
-
 
         poolAddresses.addAll(poolProfitsAddress.getAddresses());
         boolean submitToAggregationSite = Boolean.valueOf(properties.getProperty("submitToAggregationSite", "false"));
