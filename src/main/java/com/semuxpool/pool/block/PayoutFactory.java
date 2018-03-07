@@ -52,9 +52,16 @@ public class PayoutFactory
             //add up pool fees
             Long poolProfit = 0l;
 
-            for (String address : profitsAddress.getAddresses())
+            if (blockResult.getPayouts() != null)
             {
-                poolProfit += blockResult.getPayouts().get(address);
+                for (String address : profitsAddress.getAddresses())
+                {
+                    Long blockProfit = blockResult.getPayouts().get(address);
+                    if (blockProfit != null)
+                    {
+                        poolProfit += blockProfit;
+                    }
+                }
             }
 
             if (poolProfit != null)
