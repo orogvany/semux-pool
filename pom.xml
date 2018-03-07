@@ -114,7 +114,7 @@
         <dependency>
             <groupId>com.github.orogvany</groupId>
             <artifactId>semux-java-client</artifactId>
-            <version>18a49b834eaa042de7ab2dcaf2c69c72a4675393</version>
+            <version>78c521ed03560413e0694921fb6e51ca6b6a3464</version>
         </dependency>
 
         <!-- http client -->
