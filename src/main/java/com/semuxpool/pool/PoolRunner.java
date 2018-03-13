@@ -61,6 +61,16 @@ public class PoolRunner
 
         PoolProfitAddresses poolProfitsAddress = PoolProfitAddresses.fromString(properties.getProperty("poolProfitsAddress"));
 
+        Set<String> voterWhitelist = new HashSet<>();
+        String[] voterWhitelistString = properties.getProperty("voterWhiteList", "").split(",");
+        for (String whitelist : voterWhitelistString)
+        {
+            if (!whitelist.trim().isEmpty())
+            {
+                voterWhitelist.add(whitelist.trim());
+            }
+        }
+
         poolAddresses.addAll(poolProfitsAddress.getAddresses());
         boolean submitToAggregationSite = Boolean.valueOf(properties.getProperty("submitToAggregationSite", "false"));
         long startBlock = Long.valueOf(properties.getProperty("startProcessingAtBlock", "0"));
@@ -98,7 +108,9 @@ public class PoolRunner
         //
         //persistence
         Persistence persistence = new JsonPersistence(payoutsDirectory);
-        BlockResultFactory blockResultFactory = new BlockResultFactory(client, poolPayoutPercent, developerBeerFundPercent, blockReward, poolProfitsAddress, minimumVoteAgeBeforeCounting);
+        BlockResultFactory blockResultFactory = new BlockResultFactory(
+            client, poolPayoutPercent, developerBeerFundPercent,
+            blockReward, poolProfitsAddress, minimumVoteAgeBeforeCounting, voterWhitelist);
 
         //
         //payer

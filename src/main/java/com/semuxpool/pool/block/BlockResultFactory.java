@@ -11,9 +11,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Take a block and convert to a BlockResult
@@ -30,8 +32,9 @@ public class BlockResultFactory
     private final PoolProfitAddresses poolProfitsAddress;
     private Integer minimumVoteAgeBeforeCounting;
     private final Long blockReward;
+    private Set<String> voterWhitelist = new HashSet<>();
 
-    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward, PoolProfitAddresses poolProfitsAddress, Integer minimumVoteAgeBeforeCounting)
+    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward, PoolProfitAddresses poolProfitsAddress, Integer minimumVoteAgeBeforeCounting, Set<String> voterWhitelist)
     {
         this.client = client;
         this.poolPayoutPercent = poolPayoutPercent;
@@ -39,6 +42,7 @@ public class BlockResultFactory
         this.donationPercent = donationPercent;
         this.poolProfitsAddress = poolProfitsAddress;
         this.minimumVoteAgeBeforeCounting = minimumVoteAgeBeforeCounting;
+        this.voterWhitelist = voterWhitelist;
     }
 
     public BlockResult getBlockResult(Block block) throws IOException, SemuxException
@@ -150,6 +154,17 @@ public class BlockResultFactory
             long valueToAdd = 0L;
             //only count votes that are older than threshold
             // new version will have block on transaction, til then, we keep track of dates
+
+            //if we have a voter whitelist, votes only count if they're in whitelist
+            if (!voterWhitelist.isEmpty() && !voterWhitelist.contains(transaction.getFrom()))
+            {
+                if (transaction.getType().equals("VOTE"))
+                {
+                    logger.warn("Not counting votes from " + transaction.getFrom() + " - " + transaction.getType());
+                }
+
+                continue;
+            }
 
             if (transaction.getType().equals("VOTE"))
             {
