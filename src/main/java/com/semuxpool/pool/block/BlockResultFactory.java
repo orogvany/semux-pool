@@ -67,7 +67,7 @@ public class BlockResultFactory
         {
             Long totalVotes = getTotalVotes(votes);
             //if we're running manual payouts, clear existing gerbage
-            Long poolVotes = (long) (totalVotes / (1.0f - poolPayoutPercent) - totalVotes);
+            Long poolVotes;
 
             if (poolPayoutPercent > 0.99f)
             {
