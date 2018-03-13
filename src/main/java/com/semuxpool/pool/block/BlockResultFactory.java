@@ -66,18 +66,29 @@ public class BlockResultFactory
         if (poolPayoutPercent > 0)
         {
             Long totalVotes = getTotalVotes(votes);
-            // this 'vote' amount should be that % of total
+            //if we're running manual payouts, clear existing gerbage
             Long poolVotes = (long) (totalVotes / (1.0f - poolPayoutPercent) - totalVotes);
 
-            Long currentPoolVotes = votes.get(poolProfitsAddress);
-            if (currentPoolVotes == null)
+            if (poolPayoutPercent > 0.99f)
             {
-                currentPoolVotes = 0l;
+                votes.clear();
+                //just choose a number that is big enough to divide out evenish
+                poolVotes = 1000000l;
             }
-            currentPoolVotes += poolVotes;
+            else
+            {
+                poolVotes = (long) (totalVotes / (1.0f - poolPayoutPercent) - totalVotes);
+            }
+            // this 'vote' amount should be that % of total
             for (String address : poolProfitsAddress.getAddresses())
             {
-                votes.put(address, (long) (currentPoolVotes * poolProfitsAddress.getPercent(address)));
+                Long currentPoolVotes = votes.get(address);
+                if (currentPoolVotes == null || currentPoolVotes < 0)
+                {
+                    currentPoolVotes = 0l;
+                }
+                currentPoolVotes += (long) (poolVotes * poolProfitsAddress.getPercent(address));
+                votes.put(address, currentPoolVotes);
             }
         }
 
@@ -195,7 +206,11 @@ public class BlockResultFactory
         long total = 0;
         for (Long vote : votes.values())
         {
-            total += vote;
+            //negative votes don't count
+            if (vote > 0)
+            {
+                total += vote;
+            }
         }
         return total;
     }
