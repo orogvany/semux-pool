@@ -55,13 +55,9 @@ public class PoolChecker
         }
 
         //let's scan all blocks since beginning of time and see what's missing
-        Long totalBlocks = Long.valueOf(client.getInfo().getLatestBlockNumber());
+        Long totalBlocks = (long) client.getInfo().getLatestBlockNumber();
         for(long i =0; i<= totalBlocks;i++)
         {
-            if(i %10000 == 0)
-            {
-
-            }
             Block block = client.getBlock(i);
             if(block.getCoinbase().equals(delegateAddress))
             {
@@ -71,7 +67,5 @@ public class PoolChecker
                 }
             }
         }
-
-
     }
 }

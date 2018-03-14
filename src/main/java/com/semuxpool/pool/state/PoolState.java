@@ -3,7 +3,6 @@ package com.semuxpool.pool.state;
 import com.semuxpool.pool.Constants;
 import com.semuxpool.pool.api.Payment;
 import com.semuxpool.pool.api.Payout;
-import com.semuxpool.pool.status.StatusLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

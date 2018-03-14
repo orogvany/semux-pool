@@ -21,7 +21,7 @@ public class JsonPersistence implements Persistence
 {
     private static final Logger logger = LoggerFactory.getLogger(JsonPersistence.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static String payoutsDirectory = "payouts";
+    private String payoutsDirectory = "payouts";
 
     public JsonPersistence(String payoutsDirectory)
     {

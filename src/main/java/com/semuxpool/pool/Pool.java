@@ -31,7 +31,7 @@ public class Pool implements Runnable
 {
     private static final Logger logger = LoggerFactory.getLogger(Pool.class);
 
-    private int loggingInterval;
+    private final int loggingInterval;
     private final SemuxClient client;
     private final Persistence persistence;
     private final String delegateAddress;

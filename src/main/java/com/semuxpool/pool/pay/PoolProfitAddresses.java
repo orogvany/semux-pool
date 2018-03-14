@@ -13,7 +13,8 @@ import java.util.Map;
 public class PoolProfitAddresses
 {
     private static final Logger logger = LoggerFactory.getLogger(PoolProfitAddresses.class);
-    private Map<String, Float> addressToPercent = new HashMap<>();
+
+    private final Map<String, Float> addressToPercent = new HashMap<>();
 
     public static PoolProfitAddresses fromString(String addresses)
     {

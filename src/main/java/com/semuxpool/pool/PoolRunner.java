@@ -55,8 +55,11 @@ public class PoolRunner
         boolean debugMode = Boolean.valueOf(properties.getProperty("debugMode", "false"));
         //handle pool quitters
         boolean dontPayPoolQuitters = Boolean.valueOf(properties.getProperty("dontPayPoolQuitters", "false"));
-        String payQuitterAddress = properties.getProperty("poolQuitterAddress");
-        poolAddresses.add(payQuitterAddress);
+        String payQuitterAddress = properties.getProperty("poolQuitterAddress", "");
+        if(!payQuitterAddress.isEmpty())
+        {
+            poolAddresses.add(payQuitterAddress);
+        }
         Integer minimumVoteAgeBeforeCounting = Integer.valueOf(properties.getProperty("minimumVoteAgeBeforeCounting", "200"));
 
         PoolProfitAddresses poolProfitsAddress = PoolProfitAddresses.fromString(properties.getProperty("poolProfitsAddress"));

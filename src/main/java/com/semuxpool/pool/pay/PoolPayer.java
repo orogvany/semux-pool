@@ -31,7 +31,7 @@ public class PoolPayer
     //whether to count votes from voter's who left in the middle of the cycle
     private final boolean dontPayPoolQuitters;
     private final String payQuitterAddress;
-    private Set<String> poolAddresses;
+    private final Set<String> poolAddresses;
 
     public PoolPayer(SemuxClient client, String delegateAddress, Persistence persistence, long fee,
         long minPayout, String note, boolean dontPayPoolQuitters, String payQuitterAddress, Set<String> poolAddresses)

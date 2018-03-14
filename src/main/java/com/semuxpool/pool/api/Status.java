@@ -6,6 +6,8 @@ import java.util.Set;
 
 /**
  * Pools current status
+ *
+ * TODO - WIP
  */
 public class Status
 {

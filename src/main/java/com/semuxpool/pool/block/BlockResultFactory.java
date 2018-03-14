@@ -30,7 +30,7 @@ public class BlockResultFactory
     private final float poolPayoutPercent;
     private final float donationPercent;
     private final PoolProfitAddresses poolProfitsAddress;
-    private Integer minimumVoteAgeBeforeCounting;
+    private final Integer minimumVoteAgeBeforeCounting;
     private final Long blockReward;
     private Set<String> voterWhitelist = new HashSet<>();
 
@@ -118,7 +118,12 @@ public class BlockResultFactory
         //
 
         //get payout for pool
-        Long poolPayout = result.getPayouts().get(poolProfitsAddress);
+
+        Long poolPayout = 0l;
+        for (String profitAddress : poolProfitsAddress.getAddresses())
+        {
+            poolPayout += result.getPayouts().get(profitAddress);
+        }
         logger.trace("Pool profits: " + poolPayout);
         float totalPercent = 0;
         float totalVotesPercent = 0;
@@ -186,7 +191,7 @@ public class BlockResultFactory
 
             if (valueToAdd != 0L)
             {
-                Long currentVal = (Long) votes.get(transaction.getFrom());
+                Long currentVal = votes.get(transaction.getFrom());
                 if (currentVal == null)
                 {
                     currentVal = 0L;
@@ -199,7 +204,14 @@ public class BlockResultFactory
                     currentVal = 0l;
                 }
 
-                votes.put(transaction.getFrom(), currentVal);
+                if (currentVal > 0)
+                {
+                    votes.put(transaction.getFrom(), currentVal);
+                }
+                else
+                {
+                    votes.remove(transaction.getFrom());
+                }
             }
         }
 

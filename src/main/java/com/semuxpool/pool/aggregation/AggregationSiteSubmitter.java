@@ -80,7 +80,7 @@ public class AggregationSiteSubmitter
         }
     }
 
-    public CloseableHttpClient getClient() throws KeyManagementException, NoSuchAlgorithmException
+    private CloseableHttpClient getClient() throws KeyManagementException, NoSuchAlgorithmException
     {
         SSLContext sslContext = SSLContext.getInstance("SSL");
 
@@ -113,9 +113,8 @@ public class AggregationSiteSubmitter
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(httpsScheme);
 
-// apache HttpClient version >4.2 should use BasicClientConnectionManager
+        // apache HttpClient version >4.2 should use BasicClientConnectionManager
         ClientConnectionManager cm = new SingleClientConnManager(schemeRegistry);
-        CloseableHttpClient httpClient = HttpClients.custom().setSslcontext(sslContext).build();
-        return httpClient;
+        return HttpClients.custom().setSslcontext(sslContext).build();
     }
 }
