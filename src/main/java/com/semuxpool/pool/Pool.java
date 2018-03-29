@@ -189,7 +189,7 @@ public class Pool implements Runnable
                 {
                     if (isSynced)
                     {
-                        logger.info("Time is pays " + payoutTime + ", time to pay!");
+                        logger.info("Time is " + payoutTime + ", time to pay!");
                     }
                     return isSynced;
                 }

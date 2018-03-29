@@ -122,7 +122,10 @@ public class BlockResultFactory
         Long poolPayout = 0l;
         for (String profitAddress : poolProfitsAddress.getAddresses())
         {
-            poolPayout += result.getPayouts().get(profitAddress);
+            if(result.getPayouts() != null && result.getPayouts().get(profitAddress) != null)
+            {
+                poolPayout += result.getPayouts().get(profitAddress);
+            }
         }
         logger.trace("Pool profits: " + poolPayout);
         float totalPercent = 0;

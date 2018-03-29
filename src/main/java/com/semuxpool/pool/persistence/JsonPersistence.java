@@ -123,7 +123,11 @@ public class JsonPersistence implements Persistence
         List<Payout> payouts = new ArrayList<>();
         for (String fileName : payoutFileNames)
         {
-            logger.debug("Checking file " + fileName);
+            if(!fileName.endsWith(".json"))
+            {
+                continue;
+            }
+            logger.info("Checking file " + fileName);
             //look for last one not paid out
             File file = new File(fileName);
             Payout payout = mapper.readValue(file, Payout.class);
