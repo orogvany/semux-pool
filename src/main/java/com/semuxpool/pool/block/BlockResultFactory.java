@@ -147,6 +147,7 @@ public class BlockResultFactory {
             long valueToAdd = 0L;
             //only count votes that are older than threshold
             // new version will have block on transaction, til then, we keep track of dates
+            // TODO - new version has this feature, should update logic!
 
             //if we have a voter whitelist, votes only count if they're in whitelist
             if (!voterWhitelist.isEmpty() && !voterWhitelist.contains(transaction.getFrom())) {

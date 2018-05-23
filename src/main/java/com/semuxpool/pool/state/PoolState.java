@@ -29,7 +29,6 @@ public class PoolState {
     private long currentBlock;
     private Date lastPayoutDate;
 
-
     public long getTotalPoolProfits() {
         return totalPoolProfits;
     }

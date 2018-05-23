@@ -51,7 +51,6 @@ public class JsonPersistence implements Persistence {
         return null;
     }
 
-
     public PoolState loadPoolState() throws IOException {
         PoolState poolState = new PoolState();
 
