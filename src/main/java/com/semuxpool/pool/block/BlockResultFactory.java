@@ -20,8 +20,7 @@ import java.util.Set;
 /**
  * Take a block and convert to a BlockResult
  */
-public class BlockResultFactory
-{
+public class BlockResultFactory {
     private static final Logger logger = LoggerFactory.getLogger(BlockResultFactory.class);
 
     //optional donation address
@@ -33,9 +32,11 @@ public class BlockResultFactory
     private final Integer minimumVoteAgeBeforeCounting;
     private final Long blockReward;
     private Set<String> voterWhitelist = new HashSet<>();
+    private Set<String> voterBlacklist = new HashSet<>();
 
-    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward, PoolProfitAddresses poolProfitsAddress, Integer minimumVoteAgeBeforeCounting, Set<String> voterWhitelist)
-    {
+    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward,
+                              PoolProfitAddresses poolProfitsAddress, Integer minimumVoteAgeBeforeCounting,
+                              Set<String> voterWhitelist, Set<String> voterBlacklist) {
         this.client = client;
         this.poolPayoutPercent = poolPayoutPercent;
         this.blockReward = blockReward;
@@ -43,23 +44,21 @@ public class BlockResultFactory
         this.poolProfitsAddress = poolProfitsAddress;
         this.minimumVoteAgeBeforeCounting = minimumVoteAgeBeforeCounting;
         this.voterWhitelist = voterWhitelist;
+        this.voterBlacklist = voterBlacklist;
     }
 
-    public BlockResult getBlockResult(Block block) throws IOException, SemuxException
-    {
+    public BlockResult getBlockResult(Block block) throws IOException, SemuxException {
         //get the current voters active at that block, either for that delegate or for all
         Map<String, Long> votes = getAgedVotesForBlock(block);
 
         // no donation if just single voter
-        if (donationPercent > 0 && votes.size() > 1)
-        {
+        if (donationPercent > 0 && votes.size() > 1) {
             Long totalVotes = getTotalVotes(votes);
             // this 'vote' amount should be that % of total
             Long poolVotes = (long) (totalVotes / (1.0f - donationPercent) - totalVotes);
 
             Long currentPoolVotes = votes.get(DONATION_ADDRESS);
-            if (currentPoolVotes == null)
-            {
+            if (currentPoolVotes == null) {
                 currentPoolVotes = 0l;
             }
             currentPoolVotes += poolVotes;
@@ -67,28 +66,22 @@ public class BlockResultFactory
         }
 
         //add in our payout address
-        if (poolPayoutPercent > 0)
-        {
+        if (poolPayoutPercent > 0) {
             Long totalVotes = getTotalVotes(votes);
             //if we're running manual payouts, clear existing gerbage
             Long poolVotes;
 
-            if (poolPayoutPercent > 0.99f)
-            {
+            if (poolPayoutPercent > 0.99f) {
                 votes.clear();
                 //just choose a number that is big enough to divide out evenish
                 poolVotes = 1000000l;
-            }
-            else
-            {
+            } else {
                 poolVotes = (long) (totalVotes / (1.0f - poolPayoutPercent) - totalVotes);
             }
             // this 'vote' amount should be that % of total
-            for (String address : poolProfitsAddress.getAddresses())
-            {
+            for (String address : poolProfitsAddress.getAddresses()) {
                 Long currentPoolVotes = votes.get(address);
-                if (currentPoolVotes == null || currentPoolVotes < 0)
-                {
+                if (currentPoolVotes == null || currentPoolVotes < 0) {
                     currentPoolVotes = 0l;
                 }
                 currentPoolVotes += (long) (poolVotes * poolProfitsAddress.getPercent(address));
@@ -108,8 +101,7 @@ public class BlockResultFactory
 
         //let's double check the payouts
         Long totalPaid = 0l;
-        for (Long payout : result.getPayouts().values())
-        {
+        for (Long payout : result.getPayouts().values()) {
             totalPaid += payout;
         }
 
@@ -118,20 +110,16 @@ public class BlockResultFactory
         //
 
         //get payout for pool
-
         Long poolPayout = 0l;
-        for (String profitAddress : poolProfitsAddress.getAddresses())
-        {
-            if(result.getPayouts() != null && result.getPayouts().get(profitAddress) != null)
-            {
+        for (String profitAddress : poolProfitsAddress.getAddresses()) {
+            if (result.getPayouts() != null && result.getPayouts().get(profitAddress) != null) {
                 poolPayout += result.getPayouts().get(profitAddress);
             }
         }
         logger.trace("Pool profits: " + poolPayout);
         float totalPercent = 0;
         float totalVotesPercent = 0;
-        for (Map.Entry<String, Long> payout : result.getPayouts().entrySet())
-        {
+        for (Map.Entry<String, Long> payout : result.getPayouts().entrySet()) {
             float percent = (float) payout.getValue() / (float) totalPaid;
             totalPercent += percent;
             float votesPercent = (float) votes.get(payout.getKey()) / totalVotes;
@@ -143,19 +131,16 @@ public class BlockResultFactory
         return result;
     }
 
-    private Map<String, Long> getAgedVotesForBlock(Block block) throws IOException, SemuxException
-    {
+    private Map<String, Long> getAgedVotesForBlock(Block block) throws IOException, SemuxException {
         String delegate = block.getCoinbase();
         List transactions = client.getAccountTransactions(delegate, 0, 2147483647);
         HashMap<String, Long> votes = new HashMap<>();
         Iterator iterator = transactions.iterator();
         Long oldestBlockDate = client.getBlock(Math.max(1, block.getNumber() - minimumVoteAgeBeforeCounting)).getTimestamp();
 
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Transaction transaction = (Transaction) iterator.next();
-            if (transaction.getTimestamp() > block.getTimestamp())
-            {
+            if (transaction.getTimestamp() > block.getTimestamp()) {
                 break;
             }
 
@@ -164,55 +149,49 @@ public class BlockResultFactory
             // new version will have block on transaction, til then, we keep track of dates
 
             //if we have a voter whitelist, votes only count if they're in whitelist
-            if (!voterWhitelist.isEmpty() && !voterWhitelist.contains(transaction.getFrom()))
-            {
-                if (transaction.getType().equals("VOTE"))
-                {
+            if (!voterWhitelist.isEmpty() && !voterWhitelist.contains(transaction.getFrom())) {
+                if (transaction.getType().equals("VOTE")) {
                     logger.warn("Not counting votes from " + transaction.getFrom() + " - " + transaction.getType());
                 }
 
                 continue;
             }
 
-            if (transaction.getType().equals("VOTE"))
-            {
-                //votes only count when aged.
-                if (transaction.getTimestamp() <= oldestBlockDate)
-                {
-                    valueToAdd = transaction.getValue();
+            if (voterBlacklist.contains(transaction.getFrom())) {
+                if (transaction.getType().equals("VOTE")) {
+                    logger.warn("Not counting votes from blacklisted " + transaction.getFrom() + " - " + transaction.getType());
                 }
-                else
-                {
+
+                continue;
+            }
+
+            if (transaction.getType().equals("VOTE")) {
+                //votes only count when aged.
+                if (transaction.getTimestamp() <= oldestBlockDate) {
+                    valueToAdd = transaction.getValue();
+                } else {
                     logger.debug("Vote not yet vested");
                 }
-            }
-            else if (transaction.getType().equals("UNVOTE"))
-            {
+            } else if (transaction.getType().equals("UNVOTE")) {
                 //unvotes count immediately
                 valueToAdd = 0L - transaction.getValue();
             }
 
-            if (valueToAdd != 0L)
-            {
+            if (valueToAdd != 0L) {
                 Long currentVal = votes.get(transaction.getFrom());
-                if (currentVal == null)
-                {
+                if (currentVal == null) {
                     currentVal = 0L;
                 }
 
                 currentVal = currentVal + valueToAdd;
-                if (currentVal < 0L)
-                {
+                if (currentVal < 0L) {
                     logger.info("Negative vote amount from " + transaction.getFrom() + ", votes = " + currentVal + ". This is normal when votes not yet vested are unvoted.");
                     currentVal = 0l;
                 }
 
-                if (currentVal > 0)
-                {
+                if (currentVal > 0) {
                     votes.put(transaction.getFrom(), currentVal);
-                }
-                else
-                {
+                } else {
                     votes.remove(transaction.getFrom());
                 }
             }
@@ -221,32 +200,26 @@ public class BlockResultFactory
         return votes;
     }
 
-    private Long getReward(Block block)
-    {
+    private Long getReward(Block block) {
         Long total = blockReward;
-        for (Transaction transaction : block.getTransactions())
-        {
+        for (Transaction transaction : block.getTransactions()) {
             total += transaction.getFee();
         }
         return total;
     }
 
-    private Long getTotalVotes(Map<String, Long> votes)
-    {
+    private Long getTotalVotes(Map<String, Long> votes) {
         long total = 0;
-        for (Long vote : votes.values())
-        {
+        for (Long vote : votes.values()) {
             //negative votes don't count
-            if (vote > 0)
-            {
+            if (vote > 0) {
                 total += vote;
             }
         }
         return total;
     }
 
-    public PoolProfitAddresses getPoolProfitsAddress()
-    {
+    public PoolProfitAddresses getPoolProfitsAddress() {
         return poolProfitsAddress;
     }
 }
