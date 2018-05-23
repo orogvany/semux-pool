@@ -13,15 +13,13 @@ import java.util.TreeMap;
 /**
  * Construct Payouts from BlockResults
  */
-public class PayoutFactory
-{
+public class PayoutFactory {
     //the address for pool profits to be paid out to.
     private final PoolProfitAddresses profitsAddress;
     private final String delegateName;
     private final long fee;
 
-    public PayoutFactory(String delegateName, PoolProfitAddresses profitsAddress, long fee)
-    {
+    public PayoutFactory(String delegateName, PoolProfitAddresses profitsAddress, long fee) {
         this.delegateName = delegateName;
         this.profitsAddress = profitsAddress;
         this.fee = fee;
@@ -34,38 +32,31 @@ public class PayoutFactory
      * @param startBlockId startBlockId
      * @return Payout
      */
-    public synchronized Payout getPayoutForBlockResults(List<BlockResult> blocks, Long startBlockId)
-    {
+    public synchronized Payout getPayoutForBlockResults(List<BlockResult> blocks, Long startBlockId) {
         Payout payout = new Payout();
-        if (blocks.isEmpty())
-        {
+        if (blocks.isEmpty()) {
             return null;
         }
 
 
         long totalPoolFees = 0l;
         TreeMap<Long, String> blocksForged = new TreeMap<>();
-        for (BlockResult blockResult : blocks)
-        {
+        for (BlockResult blockResult : blocks) {
             blocksForged.put(blockResult.getBlockId(), delegateName);
 
             //add up pool fees
             Long poolProfit = 0l;
 
-            if (blockResult.getPayouts() != null)
-            {
-                for (String address : profitsAddress.getAddresses())
-                {
+            if (blockResult.getPayouts() != null) {
+                for (String address : profitsAddress.getAddresses()) {
                     Long blockProfit = blockResult.getPayouts().get(address);
-                    if (blockProfit != null)
-                    {
+                    if (blockProfit != null) {
                         poolProfit += blockProfit;
                     }
                 }
             }
 
-            if (poolProfit != null)
-            {
+            if (poolProfit != null) {
                 totalPoolFees += poolProfit;
             }
         }
@@ -83,16 +74,12 @@ public class PayoutFactory
         return payout;
     }
 
-    private synchronized Map<String, Long> getPayouts(List<BlockResult> blockResults)
-    {
+    private synchronized Map<String, Long> getPayouts(List<BlockResult> blockResults) {
         Map<String, Long> unPaidPayouts = new HashMap<>();
-        for (BlockResult result : blockResults)
-        {
-            for (Map.Entry<String, Long> payout : result.getPayouts().entrySet())
-            {
+        for (BlockResult result : blockResults) {
+            for (Map.Entry<String, Long> payout : result.getPayouts().entrySet()) {
                 Long val = unPaidPayouts.get(payout.getKey());
-                if (val == null)
-                {
+                if (val == null) {
                     val = 0l;
                 }
                 val += payout.getValue();

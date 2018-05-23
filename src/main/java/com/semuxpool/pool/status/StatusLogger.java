@@ -10,12 +10,10 @@ import java.util.Map;
 /**
  * Logging for current state of pool payouts
  */
-public class StatusLogger
-{
+public class StatusLogger {
     private static final Logger logger = LoggerFactory.getLogger(StatusLogger.class);
 
-    public void logState(PoolState poolState)
-    {
+    public void logState(PoolState poolState) {
         logger.info("=====================");
         logger.info("Block: " + poolState.getCurrentBlock());
         logger.info("Pool profit: " + Constants.getInSEM(poolState.getTotalPoolProfits()));
@@ -32,18 +30,13 @@ public class StatusLogger
         logger.info("Current unpaid balances");
         long calculatedUnpaid = 0;
         long calculatedOverpaid = 0;
-        for (Map.Entry<String, Long> unpaid : poolState.getUnpaidBalances().entrySet())
-        {
-            if (unpaid.getValue() > 0)
-            {
+        for (Map.Entry<String, Long> unpaid : poolState.getUnpaidBalances().entrySet()) {
+            if (unpaid.getValue() > 0) {
                 calculatedUnpaid += unpaid.getValue();
-            }
-            else
-            {
+            } else {
                 calculatedOverpaid -= unpaid.getValue();
             }
-            if(unpaid.getValue() != 0)
-            {
+            if (unpaid.getValue() != 0) {
                 logger.info(unpaid.getKey() + " : " + Constants.getInSEM(unpaid.getValue()));
             }
         }
@@ -53,8 +46,7 @@ public class StatusLogger
         logger.info("=====================");
         logger.info("Current paid balances");
         long calculatedPaid = 0;
-        for (Map.Entry<String, Long> paid : poolState.getPaidBalances().entrySet())
-        {
+        for (Map.Entry<String, Long> paid : poolState.getPaidBalances().entrySet()) {
             calculatedPaid += paid.getValue();
             logger.info(paid.getKey() + " : " + Constants.getInSEM(paid.getValue()));
         }

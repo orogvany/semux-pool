@@ -8,8 +8,7 @@ import java.io.IOException;
 /**
  * Persistence for pool stats
  */
-public interface Persistence
-{
+public interface Persistence {
     String persistPayout(Payout payout);
 
     PoolState loadPoolState() throws IOException;

@@ -6,68 +6,56 @@ import java.util.Set;
 
 /**
  * Pools current status
- *
+ * <p>
  * TODO - WIP
  */
-public class Status
-{
+public class Status {
     private Long currentBlock;
     private Long poolPaid;
     private Map<String, com.semuxpool.pool.api.Payment> payments;
     private Set<com.semuxpool.pool.api.DelegateInfo> delegates;
     private Date updated;
 
-    public Status()
-    {
+    public Status() {
     }
 
-    public Long getCurrentBlock()
-    {
+    public Long getCurrentBlock() {
         return currentBlock;
     }
 
-    public void setCurrentBlock(Long currentBlock)
-    {
+    public void setCurrentBlock(Long currentBlock) {
         this.currentBlock = currentBlock;
     }
 
-    public Long getPoolPaid()
-    {
+    public Long getPoolPaid() {
         return poolPaid;
     }
 
-    public void setPoolPaid(Long poolPaid)
-    {
+    public void setPoolPaid(Long poolPaid) {
         this.poolPaid = poolPaid;
     }
 
-    public Map<String, com.semuxpool.pool.api.Payment> getPayments()
-    {
+    public Map<String, com.semuxpool.pool.api.Payment> getPayments() {
         return payments;
     }
 
-    public void setPayments(Map<String, com.semuxpool.pool.api.Payment> payments)
-    {
+    public void setPayments(Map<String, com.semuxpool.pool.api.Payment> payments) {
         this.payments = payments;
     }
 
-    public Set<com.semuxpool.pool.api.DelegateInfo> getDelegates()
-    {
+    public Set<com.semuxpool.pool.api.DelegateInfo> getDelegates() {
         return delegates;
     }
 
-    public void setDelegates(Set<com.semuxpool.pool.api.DelegateInfo> delegates)
-    {
+    public void setDelegates(Set<com.semuxpool.pool.api.DelegateInfo> delegates) {
         this.delegates = delegates;
     }
 
-    public Date getUpdated()
-    {
+    public Date getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Date updated)
-    {
+    public void setUpdated(Date updated) {
         this.updated = updated;
     }
 }

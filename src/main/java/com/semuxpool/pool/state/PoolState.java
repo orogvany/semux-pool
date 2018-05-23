@@ -13,8 +13,7 @@ import java.util.Set;
 
 /**
  */
-public class PoolState
-{
+public class PoolState {
     private static final Logger logger = LoggerFactory.getLogger(PoolState.class);
     private final Map<String, Long> unpaidBalances = new HashMap<>();
     private final Map<String, Long> paidBalances = new HashMap<>();
@@ -31,93 +30,76 @@ public class PoolState
     private Date lastPayoutDate;
 
 
-    public long getTotalPoolProfits()
-    {
+    public long getTotalPoolProfits() {
         return totalPoolProfits;
     }
 
-    public void setTotalPoolProfits(long totalPoolProfits)
-    {
+    public void setTotalPoolProfits(long totalPoolProfits) {
         this.totalPoolProfits = totalPoolProfits;
     }
 
-    public long getTotalPaidOut()
-    {
+    public long getTotalPaidOut() {
         return totalPaidOut;
     }
 
-    public void setTotalPaidOut(long totalPaidOut)
-    {
+    public void setTotalPaidOut(long totalPaidOut) {
         this.totalPaidOut = totalPaidOut;
     }
 
-    public long getTotalUnpaid()
-    {
+    public long getTotalUnpaid() {
         return totalUnpaid;
     }
 
-    public long getTotalFeesPaid()
-    {
+    public long getTotalFeesPaid() {
         return totalFeesPaid;
     }
 
-    public Set<String> getDelegates()
-    {
+    public Set<String> getDelegates() {
         return delegates;
     }
 
-    public void setDelegates(Set<String> delegates)
-    {
+    public void setDelegates(Set<String> delegates) {
         this.delegates = delegates;
     }
 
-    public long getCurrentBlock()
-    {
+    public long getCurrentBlock() {
         return currentBlock;
     }
 
-    public void setCurrentBlock(long currentBlock)
-    {
+    public void setCurrentBlock(long currentBlock) {
         this.currentBlock = currentBlock;
     }
 
-    public Map<String, Long> getUnpaidBalances()
-    {
+    public Map<String, Long> getUnpaidBalances() {
         return unpaidBalances;
     }
 
-    public Map<String, Long> getPaidBalances()
-    {
+    public Map<String, Long> getPaidBalances() {
         return paidBalances;
     }
 
-    public long getBlocksForged()
-    {
+    public long getBlocksForged() {
         return blocksForged;
     }
 
-    public synchronized void addPayout(Payout payouts)
-    {
+    public synchronized void addPayout(Payout payouts) {
         totalPoolProfits += payouts.getPoolProfits();
         //for each set of blocks we owe, first add what we owe
         long subtotalUnpaid = 0;
-        for (Map.Entry<String, Long> payout : payouts.getPayouts().entrySet())
-        {
+        for (Map.Entry<String, Long> payout : payouts.getPayouts().entrySet()) {
             Long amount = add(payout.getValue(), unpaidBalances.get(payout.getKey()));
             unpaidBalances.put(payout.getKey(), amount);
             subtotalUnpaid += payout.getValue();
         }
         logger.info("SubtotalUnpaid:" + Constants.getInSEM(subtotalUnpaid));
-        if (subtotalUnpaid != payouts.getTotalPayouts())
-        {
+        if (subtotalUnpaid != payouts.getTotalPayouts()) {
             logger.error("Calculated " + subtotalUnpaid + " payout but was " + payouts.getTotalPayouts());
         }
         totalUnpaid += subtotalUnpaid;
 
         //then subtract what we paid.
         long subtotalPaid = 0;
-        for (Map.Entry<String, Payment> paid : payouts.getPaidPayouts().entrySet())
-        {
+        for (Map.Entry<String, Payment> paid : payouts.getPaidPayouts().entrySet()) {
             Long paymentTotalWithFees = paid.getValue().getAmount() + payouts.getFee();
             Long amount = add(-paymentTotalWithFees, unpaidBalances.get(paid.getKey()));
             subtotalPaid += paymentTotalWithFees;
@@ -128,18 +110,14 @@ public class PoolState
 
             paidBalances.put(paid.getKey(), paidAmount);
 
-            if (amount != 0)
-            {
-                if (amount < 0)
-                {
+            if (amount != 0) {
+                if (amount < 0) {
                     //this occurs in bugs in early versions.  We'll just carry negative balance forward
                     logger.error("Found negative balance for " + paid.getKey() + " : " + amount);
                 }
 
                 unpaidBalances.put(paid.getKey(), amount);
-            }
-            else
-            {
+            } else {
                 unpaidBalances.remove(paid.getKey());
             }
         }
@@ -157,26 +135,21 @@ public class PoolState
      * @param b b
      * @return sum
      */
-    private Long add(Long a, Long b)
-    {
-        if (a == null)
-        {
+    private Long add(Long a, Long b) {
+        if (a == null) {
             a = 0l;
         }
-        if (b == null)
-        {
+        if (b == null) {
             b = 0l;
         }
         return a + b;
     }
 
-    public Date getLastPayoutDate()
-    {
+    public Date getLastPayoutDate() {
         return lastPayoutDate;
     }
 
-    public void setLastPayoutDate(Date lastPayoutDate)
-    {
+    public void setLastPayoutDate(Date lastPayoutDate) {
         this.lastPayoutDate = lastPayoutDate;
     }
 }

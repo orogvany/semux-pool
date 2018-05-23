@@ -15,23 +15,18 @@ import java.util.Map;
  * Mostly due to developer error
  * you can combine sets
  */
-public class PaymentsMerger
-{
-    public static void main(String[] args) throws IOException
-    {
+public class PaymentsMerger {
+    public static void main(String[] args) throws IOException {
         JsonPersistence jsonPersistence = new JsonPersistence("./fixme");
         List<Payout> payouts = jsonPersistence.getAllPayouts();
         Payout merged = new Payout();
         Map<String, Payment> mergedPaid = new HashMap<>();
-        for (Payout payout : payouts)
-        {
+        for (Payout payout : payouts) {
             Map<String, Payment> paid = payout.getPaidPayouts();
-            for (Map.Entry<String, Payment> entry : paid.entrySet())
-            {
+            for (Map.Entry<String, Payment> entry : paid.entrySet()) {
                 Payment mergedPayment = mergedPaid.get(entry.getKey());
                 Payment toMerge = entry.getValue();
-                if (mergedPayment == null)
-                {
+                if (mergedPayment == null) {
                     mergedPayment = new Payment();
                     mergedPayment.setDate(toMerge.getDate());
                     mergedPayment.setAmount(0l);
@@ -41,8 +36,7 @@ public class PaymentsMerger
                     mergedPaid.put(entry.getKey(), mergedPayment);
                 }
                 //update with new
-                if (mergedPayment.getAmount() > 0)
-                {
+                if (mergedPayment.getAmount() > 0) {
                     //consolidate the fees, since we only accounted for 1
                     mergedPayment.setAmount(mergedPayment.getAmount() + payout.getFee());
                 }

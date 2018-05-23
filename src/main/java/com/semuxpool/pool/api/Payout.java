@@ -8,8 +8,7 @@ import java.util.TreeMap;
 /**
  * Defines a logged payment over a given block range
  */
-public class Payout
-{
+public class Payout {
     private Map<String, Long> payouts = new HashMap<>();
     //address to payment confirmation address
     private Map<String, com.semuxpool.pool.api.Payment> paidPayouts = new HashMap<>();
@@ -24,119 +23,96 @@ public class Payout
     private String id;
     private Date date;
 
-    public Map<String, Long> getPayouts()
-    {
+    public Map<String, Long> getPayouts() {
         return payouts;
     }
 
-    public void setPayouts(Map<String, Long> payouts)
-    {
+    public void setPayouts(Map<String, Long> payouts) {
         this.payouts = payouts;
         long total = 0l;
-        for (Long payout : payouts.values())
-        {
+        for (Long payout : payouts.values()) {
             total += payout;
         }
         setTotalPayouts(total);
     }
 
-    public Long getStartBlock()
-    {
+    public Long getStartBlock() {
         return startBlock;
     }
 
-    public void setStartBlock(Long startBlock)
-    {
+    public void setStartBlock(Long startBlock) {
         this.startBlock = startBlock;
     }
 
-    public Long getEndBlock()
-    {
+    public Long getEndBlock() {
         return endBlock;
     }
 
-    public void setEndBlock(Long endBlock)
-    {
+    public void setEndBlock(Long endBlock) {
         this.endBlock = endBlock;
     }
 
-    public long getPoolProfits()
-    {
+    public long getPoolProfits() {
         return poolProfits;
     }
 
-    public void setPoolProfits(long poolProfits)
-    {
+    public void setPoolProfits(long poolProfits) {
         this.poolProfits = poolProfits;
     }
 
-    public Map<String, com.semuxpool.pool.api.Payment> getPaidPayouts()
-    {
+    public Map<String, com.semuxpool.pool.api.Payment> getPaidPayouts() {
         return paidPayouts;
     }
 
-    public void setPaidPayouts(Map<String, com.semuxpool.pool.api.Payment> paidPayouts)
-    {
+    public void setPaidPayouts(Map<String, com.semuxpool.pool.api.Payment> paidPayouts) {
         this.paidPayouts = paidPayouts;
     }
 
-    public long getTotalPayouts()
-    {
+    public long getTotalPayouts() {
         return totalPayouts;
     }
 
-    public void setTotalPayouts(long totalPayouts)
-    {
+    public void setTotalPayouts(long totalPayouts) {
         this.totalPayouts = totalPayouts;
     }
 
-    public TreeMap<Long, String> getBlocksForged()
-    {
+    public TreeMap<Long, String> getBlocksForged() {
         return blocksForged;
     }
 
-    public void setBlocksForged(TreeMap<Long, String> blocksForged)
-    {
+    public void setBlocksForged(TreeMap<Long, String> blocksForged) {
         this.blocksForged = blocksForged;
     }
 
-    public Long getFee()
-    {
+    public Long getFee() {
         return fee;
     }
 
-    public void setFee(Long fee)
-    {
+    public void setFee(Long fee) {
         this.fee = fee;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
-    public void setId(String id)
-    {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Date getDate()
-    {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(Date date)
-    {
+    public void setDate(Date date) {
         this.date = date;
     }
 
-    public int getNumForgedBlocks()
-    {
+    public int getNumForgedBlocks() {
         return blocksForged.size();
     }
 
-    public void setNumForgedBlocks(int size)
-    {
+    public void setNumForgedBlocks(int size) {
         //virtual - no setter.
     }
 }

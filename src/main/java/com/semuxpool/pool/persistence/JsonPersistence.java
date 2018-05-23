@@ -17,31 +17,25 @@ import java.util.List;
  * Persist payouts to readable json.
  * An actual datastore would be nicer long-term, but this is easy to debug.
  */
-public class JsonPersistence implements Persistence
-{
+public class JsonPersistence implements Persistence {
     private static final Logger logger = LoggerFactory.getLogger(JsonPersistence.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private String payoutsDirectory = "payouts";
 
-    public JsonPersistence(String payoutsDirectory)
-    {
+    public JsonPersistence(String payoutsDirectory) {
         this.payoutsDirectory = payoutsDirectory;
         MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
-    public String persistPayout(Payout payout)
-    {
-        if (payout.getPayouts().isEmpty() && payout.getPaidPayouts().isEmpty())
-        {
+    public String persistPayout(Payout payout) {
+        if (payout.getPayouts().isEmpty() && payout.getPaidPayouts().isEmpty()) {
             return null;
         }
         String fileName = payoutsDirectory + File.separator + "Payout-" + System.currentTimeMillis() + "-" + payout.getStartBlock() + "-" + payout.getEndBlock() + ".json";
         //persist the block
-        try
-        {
+        try {
             //don't double persist
-            if (payout.getId() != null)
-            {
+            if (payout.getId() != null) {
                 logger.error("Already persisted block! Use Update method");
                 System.exit(-1);
             }
@@ -51,24 +45,20 @@ public class JsonPersistence implements Persistence
 
 
             return fileName;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
 
 
-    public PoolState loadPoolState() throws IOException
-    {
+    public PoolState loadPoolState() throws IOException {
         PoolState poolState = new PoolState();
 
         long block = 0l;
 
         List<Payout> payouts = getAllPayouts();
-        for (Payout payout : payouts)
-        {
+        for (Payout payout : payouts) {
             poolState.addPayout(payout);
             block = payout.getEndBlock();
             poolState.setLastPayoutDate(payout.getDate());
@@ -81,50 +71,39 @@ public class JsonPersistence implements Persistence
     }
 
     @Override
-    public void update(Payout payout)
-    {
-        if (payout.getId() == null)
-        {
+    public void update(Payout payout) {
+        if (payout.getId() == null) {
             logger.error("Unpersisted object, use persist");
             System.exit(-1);
         }
-        try
-        {
+        try {
             MAPPER.writeValue(new File(payout.getId()), payout);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             logger.error("Unable to persist file", e);
         }
     }
 
-    public List<Payout> getAllPayouts() throws IOException
-    {
+    public List<Payout> getAllPayouts() throws IOException {
         //load all the payouts
         ObjectMapper mapper = new ObjectMapper();
 
         File directory = new File(payoutsDirectory);
-        if (!directory.isDirectory())
-        {
+        if (!directory.isDirectory()) {
             boolean success = directory.mkdir();
-            if (!success)
-            {
+            if (!success) {
                 throw new IOException("Unable to create payout directory");
             }
         }
         List<String> payoutFileNames = new ArrayList<>();
         //noinspection ConstantConditions
-        for (File file : directory.listFiles())
-        {
+        for (File file : directory.listFiles()) {
             payoutFileNames.add(file.getAbsolutePath());
         }
         Collections.sort(payoutFileNames);
 
         List<Payout> payouts = new ArrayList<>();
-        for (String fileName : payoutFileNames)
-        {
-            if(!fileName.endsWith(".json"))
-            {
+        for (String fileName : payoutFileNames) {
+            if (!fileName.endsWith(".json")) {
                 continue;
             }
             logger.info("Checking file " + fileName);

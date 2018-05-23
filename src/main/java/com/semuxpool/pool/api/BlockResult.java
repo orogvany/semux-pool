@@ -9,50 +9,41 @@ import java.util.Map;
 /**
  * Payout results for a single given forged block.
  */
-public class BlockResult
-{
+public class BlockResult {
     private Long blockId;
     private Long totalVotes;
     private Map<String, Long> votes;
     private Long blockReward;
     private String delegate;
 
-    public Long getTotalVotes()
-    {
+    public Long getTotalVotes() {
         return totalVotes;
     }
 
-    public void setTotalVotes(Long totalVotes)
-    {
+    public void setTotalVotes(Long totalVotes) {
         this.totalVotes = totalVotes;
     }
 
-    public Map<String, Long> getVotes()
-    {
+    public Map<String, Long> getVotes() {
         return votes;
     }
 
-    public void setVotes(Map<String, Long> votes)
-    {
+    public void setVotes(Map<String, Long> votes) {
         this.votes = votes;
     }
 
-    public Long getBlockReward()
-    {
+    public Long getBlockReward() {
         return blockReward;
     }
 
-    public void setBlockReward(Long blockReward)
-    {
+    public void setBlockReward(Long blockReward) {
         this.blockReward = blockReward;
     }
 
     @JsonIgnore
-    public Map<String, Long> getPayouts()
-    {
+    public Map<String, Long> getPayouts() {
         Map<String, Long> payout = new HashMap<>();
-        for (Map.Entry<String, Long> voter : votes.entrySet())
-        {
+        for (Map.Entry<String, Long> voter : votes.entrySet()) {
             payout.put(voter.getKey(), getPartialReward(voter.getValue()));
         }
         return payout;
@@ -64,33 +55,27 @@ public class BlockResult
      * @param value value
      * @return partial reward
      */
-    private Long getPartialReward(Long value)
-    {
-        if(totalVotes == 0)
-        {
+    private Long getPartialReward(Long value) {
+        if (totalVotes == 0) {
             return 0l;
         }
         BigInteger results = BigInteger.valueOf(getBlockReward()).multiply(BigInteger.valueOf(value)).divide(BigInteger.valueOf(totalVotes));
         return results.longValue();
     }
 
-    public void setDelegate(String delegate)
-    {
+    public void setDelegate(String delegate) {
         this.delegate = delegate;
     }
 
-    public String getDelegate()
-    {
+    public String getDelegate() {
         return delegate;
     }
 
-    public Long getBlockId()
-    {
+    public Long getBlockId() {
         return blockId;
     }
 
-    public void setBlockId(Long blockId)
-    {
+    public void setBlockId(Long blockId) {
         this.blockId = blockId;
     }
 }

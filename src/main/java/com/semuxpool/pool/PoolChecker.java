@@ -18,17 +18,12 @@ import java.util.TreeMap;
 /**
  * Small util to verify payments
  */
-public class PoolChecker
-{
-    public static void main(String[] args) throws IOException, SemuxException
-    {
+public class PoolChecker {
+    public static void main(String[] args) throws IOException, SemuxException {
         Properties properties = new Properties();
-        if (args.length > 0)
-        {
+        if (args.length > 0) {
             properties.load(new FileInputStream(new File("./config/" + args[0])));
-        }
-        else
-        {
+        } else {
             properties.load(new FileInputStream(new File("./config/semuxpool.properties")));
         }
 
@@ -48,21 +43,17 @@ public class PoolChecker
         JsonPersistence persistence = new JsonPersistence(payoutsDirectory);
         List<Payout> payouts = persistence.getAllPayouts();
         Set<Long> blocksForged = new HashSet<>();
-        for(Payout payout : payouts)
-        {
+        for (Payout payout : payouts) {
             TreeMap<Long, String> forged = payout.getBlocksForged();
             blocksForged.addAll(forged.keySet());
         }
 
         //let's scan all blocks since beginning of time and see what's missing
         Long totalBlocks = (long) client.getInfo().getLatestBlockNumber();
-        for(long i =0; i<= totalBlocks;i++)
-        {
+        for (long i = 0; i <= totalBlocks; i++) {
             Block block = client.getBlock(i);
-            if(block.getCoinbase().equals(delegateAddress))
-            {
-                if(!blocksForged.contains(block.getNumber()))
-                {
+            if (block.getCoinbase().equals(delegateAddress)) {
+                if (!blocksForged.contains(block.getNumber())) {
                     System.out.println("Missed block " + block.getNumber());
                 }
             }
