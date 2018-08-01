@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.semuxpool</groupId>
     <artifactId>semux-pool</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.5.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>Semux pool</description>
 
@@ -114,7 +114,7 @@
         <dependency>
             <groupId>com.github.orogvany</groupId>
             <artifactId>semux-java-client</artifactId>
-            <version>eb01d60b5b318080c27825311128ef3c358505f6</version>
+            <version>8daf7acfa0a247034d015ea47e042508fe38e5f9</version>
         </dependency>
 
         <!-- http client -->
