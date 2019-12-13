@@ -30,16 +30,14 @@ public class BlockResultFactory {
     private final float donationPercent;
     private final PoolProfitAddresses poolProfitsAddress;
     private final Integer minimumVoteAgeBeforeCounting;
-    private final Long blockReward;
-    private Set<String> voterWhitelist = new HashSet<>();
-    private Set<String> voterBlacklist = new HashSet<>();
+    private Set<String> voterWhitelist;
+    private Set<String> voterBlacklist;
 
-    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent, Long blockReward,
+    public BlockResultFactory(SemuxClient client, float poolPayoutPercent, float donationPercent,
                               PoolProfitAddresses poolProfitsAddress, Integer minimumVoteAgeBeforeCounting,
                               Set<String> voterWhitelist, Set<String> voterBlacklist) {
         this.client = client;
         this.poolPayoutPercent = poolPayoutPercent;
-        this.blockReward = blockReward;
         this.donationPercent = donationPercent;
         this.poolProfitsAddress = poolProfitsAddress;
         this.minimumVoteAgeBeforeCounting = minimumVoteAgeBeforeCounting;
@@ -202,8 +200,12 @@ public class BlockResultFactory {
     }
 
     private Long getReward(Block block) {
-        Long total = blockReward;
+        Long total = 0l;
         for (Transaction transaction : block.getTransactions()) {
+            if (transaction.getType().equalsIgnoreCase("COINBASE"))
+            {
+                total += transaction.getValue();
+            }
             total += transaction.getFee();
         }
         return total;

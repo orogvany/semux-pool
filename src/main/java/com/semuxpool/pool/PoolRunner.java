@@ -88,12 +88,10 @@ public class PoolRunner {
 
         //
         // Try to look up block reward, else use defaults
-        long blockReward = 3 * Constants.SEM;
         long fee = 5_000_000l;
 
         try {
             TransactionLimits transactionLimits = client.getTransactionLimits("TRANSFER");
-            blockReward = 3 * Constants.SEM;
             fee = transactionLimits.getMinTransactionFee();
         } catch (Exception e) {
             //old API in use, just use defaults
@@ -103,8 +101,7 @@ public class PoolRunner {
         //persistence
         Persistence persistence = new JsonPersistence(payoutsDirectory);
         BlockResultFactory blockResultFactory = new BlockResultFactory(
-                client, poolPayoutPercent, developerBeerFundPercent,
-                blockReward, poolProfitsAddress, minimumVoteAgeBeforeCounting, voterWhitelist, voterBlacklist);
+                client, poolPayoutPercent, developerBeerFundPercent, poolProfitsAddress, minimumVoteAgeBeforeCounting, voterWhitelist, voterBlacklist);
 
         //
         //payer
