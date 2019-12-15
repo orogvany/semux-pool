@@ -39,6 +39,8 @@ public class PoolRunner {
         String user = properties.getProperty("apiUser");
         String password = properties.getProperty("apiPass");
         int port = Integer.valueOf(properties.getProperty("apiPort"));
+        boolean signLocal = Boolean.valueOf(properties.getProperty("signLocal", "false"));
+        String delegatePrivateKey = properties.getProperty("delegatePrivateKey", null);
         float poolPayoutPercent = Math.max(0, Float.valueOf(properties.getProperty("poolFeePercent")));
         String note = properties.getProperty("paymentNote", "semuxpool.com");
         float developerBeerFundPercent = Math.max(0, Float.valueOf(properties.getProperty("developerBeerFundPercent", "0.05")));
@@ -105,7 +107,7 @@ public class PoolRunner {
 
         //
         //payer
-        PoolPayer payer = new PoolPayer(client, delegateAddress, persistence, fee, minPayout, note, dontPayPoolQuitters,
+        PoolPayer payer = new PoolPayer(signLocal, delegatePrivateKey, client, delegateAddress, persistence, fee, minPayout, note, dontPayPoolQuitters,
                 payQuitterAddress, poolAddresses);
 
         Pool pool = new Pool(
